@@ -1,5 +1,8 @@
 package com.example.commercepaymentsystem.domain.cart.entity;
 
+import com.example.commercepaymentsystem.common.entity.BaseEntity;
+import com.example.commercepaymentsystem.common.exception.BusinessException;
+import com.example.commercepaymentsystem.common.exception.ErrorCode;
 import com.example.commercepaymentsystem.domain.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -14,8 +17,7 @@ import lombok.NoArgsConstructor;
         @UniqueConstraint(columnNames = {"cart_id", "product_id"})
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-// BaseEntity 상속 필요
-public class CartItem {
+public class CartItem extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,7 +36,7 @@ public class CartItem {
 
     public CartItem(Cart cart, Product product, int productQuantity) {
 
-        validateQuantity(quantity);
+        validateQuantity(productQuantity);
 
         this.cart = cart;
         this.product = product;
@@ -62,8 +64,7 @@ public class CartItem {
     private void validateQuantity(int checkQuantity) {
 
         if (checkQuantity <= 0) {
-            // INVALID_CART_QUANTITY 변경 필요
-            throw new IllegalArgumentException("Quantity must be greater than zero.");
+            throw new BusinessException(ErrorCode.INVALID_QUANTITY);
         }
     }
 
