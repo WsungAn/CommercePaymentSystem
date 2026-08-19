@@ -1,7 +1,7 @@
-package com.sparta.paymentsystem.domain.order.entity;
+package com.example.commercepaymentsystem.domain.order.entity;
 
-import com.sparta.paymentsystem.domain.member.entity.Member;
-import com.sparta.paymentsystem.global.entity.BaseTimeEntity;
+import com.example.commercepaymentsystem.common.entity.BaseEntity;
+import com.example.commercepaymentsystem.domain.order.entity.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import java.util.List;
 @Table(name = "orders")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Order extends BaseTimeEntity {
+public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
