@@ -32,7 +32,7 @@ public class PaymentCommandService {
         Order order = orderService.findByIdAndMemberId(request.orderId(), memberId);
 
         // 2. 무엇을 검증? - 주문상태 = 결제대기 / 결제 상태 = 대기 인가
-        Payment payment = paymentService.findByOrderId(request.orderId());
+        Payment payment = paymentService.findByOrderIdAndMemberId(request.orderId(), memberId);
 
         if (payment.getStatus() != PaymentStatus.IN_PROGRESS) {
             throw new BusinessException(ErrorCode.INVALID_PAYMENT_STATUS);
@@ -72,7 +72,6 @@ public class PaymentCommandService {
         return new PaymentResponse(payment.getStatus(), order.getStatus());
     }
 
-    // OrderItem에 getProductId 메서드 필요
     // OrderItem에 quantity 필드 필요
     private void restoreStock(Order order) {
         for (OrderItem item : order.getOrderItems()) {
