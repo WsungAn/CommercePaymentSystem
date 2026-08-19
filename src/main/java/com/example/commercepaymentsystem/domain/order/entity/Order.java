@@ -1,11 +1,12 @@
 import com.example.commercepaymentsystem.common.entity.BaseEntity;
-import com.sparta.paymentsystem.domain.member.entity.Member;
-import com.sparta.paymentsystem.global.entity.BaseTimeEntity;
+
+import com.example.commercepaymentsystem.domain.order.entity.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.List;
 
