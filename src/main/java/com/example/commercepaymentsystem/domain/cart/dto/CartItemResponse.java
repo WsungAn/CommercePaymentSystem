@@ -6,7 +6,7 @@ import com.example.commercepaymentsystem.domain.product.entity.Product;
 
 public record CartItemResponse(
         // cartItem pk (프론트에서 수량변경 및 삭제를 위해 필요)
-        Long cartItemId,
+        Long id,
         // 상품 pk
         Long productId,
         // 상품 이름
