@@ -1,5 +1,6 @@
 package com.example.commercepaymentsystem.domain.cart.entity;
 
+import com.example.commercepaymentsystem.common.entity.BaseEntity;
 import com.example.commercepaymentsystem.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -11,14 +12,13 @@ import lombok.NoArgsConstructor;
 @Table(name = "carts")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 // BaseEntity 상속 필요
-public class Cart {
+public class Cart extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = true)
-    // Member 추가 시 import 필요
     private Member member;
 
     public Cart(Member member) {
