@@ -41,6 +41,15 @@ public class Payment extends BaseEntity {
         this.amount = amount;
     }
 
+    public void markAsPaid() {
+        changeStatus(PaymentStatus.PAID);
+        this.paidAt = LocalDateTime.now();
+    }
+
+    public void markAsFailed() {
+        changeStatus(PaymentStatus.FAILED);
+    }
+
     public void changeStatus(PaymentStatus status) {
         if (!this.status.canTransitTo(status)) {
             throw new BusinessException(ErrorCode.INVALID_PAYMENT_STATUS);

@@ -31,4 +31,16 @@ public class PaymentService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
     }
 
+    // 결제 상태 변경 - PAID
+    @Transactional
+    public void confirmPayment(Payment payment) {
+        payment.markAsPaid();
+    }
+
+    // 결제 상태 변경 - FAILED
+    @Transactional
+    public void failPayment(Payment payment) {
+        payment.markAsFailed();
+    }
+
 }
