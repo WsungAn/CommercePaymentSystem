@@ -1,4 +1,4 @@
-package com.sparta.paymentsystem.domain.order.entity;
+package com.example.commercepaymentsystem.domain.order.entity;
 
 /**
  * 주문 상태 머신
