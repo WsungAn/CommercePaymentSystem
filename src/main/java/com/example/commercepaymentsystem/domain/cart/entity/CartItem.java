@@ -1,6 +1,6 @@
 package com.example.commercepaymentsystem.domain.cart.entity;
 
-import com.example.commercepaymentsystem.product.entity.Product;
+import com.example.commercepaymentsystem.domain.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -45,6 +45,7 @@ public class CartItem {
     public void addQuantity(int addQuantity) {
 
         validateQuantity(addQuantity);
+
         quantity += addQuantity;
     }
 

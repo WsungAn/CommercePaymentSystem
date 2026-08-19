@@ -1,11 +1,11 @@
-package com.example.commercepaymentsystem.cart.repository;
-
-import com.example.commercepaymentsystem.cart.entity.Cart;
-import com.example.commercepaymentsystem.cart.entity.CartItem;
+package com.example.commercepaymentsystem.domain.cart.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+import com.example.commercepaymentsystem.cart.entity.Cart;
+import com.example.commercepaymentsystem.domain.cart.entity.CartItem;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+
 
 import java.util.Optional;
 
@@ -27,4 +27,3 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     WHERE c.cart = :cart AND c.product = :product
 """)
     Optional<CartItem>  findByCartAndProduct(Cart cart, Product product);
-}
