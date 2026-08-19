@@ -41,11 +41,11 @@ public class Payment extends BaseEntity {
         this.amount = amount;
     }
 
-    public Payment changeStatus(PaymentStatus status) {
+    public void changeStatus(PaymentStatus status) {
         if (!this.status.canTransitTo(status)) {
             throw new BusinessException(ErrorCode.INVALID_PAYMENT_STATUS);
         }
-        return this;
+        this.status = status;
     }
 
 }
