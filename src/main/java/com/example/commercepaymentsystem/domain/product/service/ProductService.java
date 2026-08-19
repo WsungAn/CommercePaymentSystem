@@ -2,14 +2,19 @@ package com.example.commercepaymentsystem.domain.product.service;
 
 import com.example.commercepaymentsystem.common.exception.BusinessException;
 import com.example.commercepaymentsystem.common.exception.ErrorCode;
+import com.example.commercepaymentsystem.common.response.PageResponse;
 import com.example.commercepaymentsystem.domain.product.dto.ProductResponse;
+import com.example.commercepaymentsystem.domain.product.dto.ProductSearchCondition;
 import com.example.commercepaymentsystem.domain.product.entity.Product;
 import com.example.commercepaymentsystem.domain.product.repository.ProductRepository;
+import com.example.commercepaymentsystem.domain.product.repository.ProductSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,10 +22,10 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public List<ProductResponse> findAll() {
-        return productRepository.findAll().stream()
-                .map(ProductResponse::from)
-                .toList();
+    public PageResponse<ProductResponse> findAll(ProductSearchCondition condition, Pageable pageable) {
+        Specification<Product> spec = ProductSpecification.search(condition);
+        Page<Product> productPage = productRepository.findAll(spec, pageable);
+        return PageResponse.of(productPage, ProductResponse::from);
     }
 
     public ProductResponse findById(Long id) {
