@@ -1,5 +1,6 @@
-package com.sparta.paymentsystem.domain.order.entity;
+정
 
+import com.example.commercepaymentsystem.common.entity.BaseEntity;
 import com.sparta.paymentsystem.domain.member.entity.Member;
 import com.sparta.paymentsystem.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -14,7 +15,7 @@ import java.util.List;
 @Table(name = "orders")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Order extends BaseTimeEntity {
+public class Order extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +30,7 @@ public class Order extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private OrderStatus status = OrderStatus.PENDING_PAYMENT;
+    private com.sparta.paymentsystem.domain.order.entity.OrderStatus status = com.sparta.paymentsystem.domain.order.entity.OrderStatus.PENDING_PAYMENT;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
