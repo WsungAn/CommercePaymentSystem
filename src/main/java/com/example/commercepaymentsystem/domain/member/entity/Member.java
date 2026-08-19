@@ -1,4 +1,4 @@
-package com.example.commercepaymentsystem.member.entity;
+package com.example.commercepaymentsystem.domain.member.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
