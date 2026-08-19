@@ -1,4 +1,4 @@
-package com.example.commercepaymentsystem.product.entity;
+package com.example.commercepaymentsystem.domain.product.entity;
 
 import com.example.commercepaymentsystem.common.entity.BaseEntity;
 import com.example.commercepaymentsystem.common.exception.BusinessException;
