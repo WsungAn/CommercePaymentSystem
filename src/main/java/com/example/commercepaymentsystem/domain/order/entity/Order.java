@@ -28,7 +28,7 @@ public class Order extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private com.sparta.paymentsystem.domain.order.entity.OrderStatus status = com.sparta.paymentsystem.domain.order.entity.OrderStatus.PENDING_PAYMENT;
+    private OrderStatus status = OrderStatus.PENDING_PAYMENT;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
