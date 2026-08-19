@@ -1,5 +1,3 @@
-정
-
 import com.example.commercepaymentsystem.common.entity.BaseEntity;
 import com.sparta.paymentsystem.domain.member.entity.Member;
 import com.sparta.paymentsystem.global.entity.BaseTimeEntity;
