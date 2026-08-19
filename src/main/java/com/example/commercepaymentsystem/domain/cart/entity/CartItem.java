@@ -1,4 +1,4 @@
-package com.example.commercepaymentsystem.cart.entity;
+package com.example.commercepaymentsystem.domain.cart.entity;
 
 import com.example.commercepaymentsystem.product.entity.Product;
 import jakarta.persistence.*;
@@ -28,7 +28,7 @@ public class CartItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(nullable = false, columnDefinition = "INT UNSIGNED")
+    @Column( nullable = false, columnDefinition = "INT UNSIGNED")
     private int quantity;
 
 
@@ -45,7 +45,6 @@ public class CartItem {
     public void addQuantity(int addQuantity) {
 
         validateQuantity(addQuantity);
-
         quantity += addQuantity;
     }
 
