@@ -1,7 +1,6 @@
 package com.example.commercepaymentsystem.domain.order.service;
 
-import com.example.commercepaymentsystem.cart.entity.CartItem;
-import com.example.commercepaymentsystem.cart.repository.CartItemRepository;
+
 import com.example.commercepaymentsystem.common.exception.BusinessException;
 import com.example.commercepaymentsystem.common.exception.ErrorCode;
 import com.example.commercepaymentsystem.common.response.PageResponse;
