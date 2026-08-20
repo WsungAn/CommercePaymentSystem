@@ -4,6 +4,8 @@ package com.example.commercepaymentsystem.domain.order.service;
 import com.example.commercepaymentsystem.common.exception.BusinessException;
 import com.example.commercepaymentsystem.common.exception.ErrorCode;
 import com.example.commercepaymentsystem.common.response.PageResponse;
+import com.example.commercepaymentsystem.domain.cart.entity.CartItem;
+import com.example.commercepaymentsystem.domain.cart.repository.CartItemRepository;
 import com.example.commercepaymentsystem.domain.member.service.MemberService;
 import com.example.commercepaymentsystem.domain.order.dto.OrderCreateRequest;
 import com.example.commercepaymentsystem.domain.order.dto.OrderCreateResponse;
