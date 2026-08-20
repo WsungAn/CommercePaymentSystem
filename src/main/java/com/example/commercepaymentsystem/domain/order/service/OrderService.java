@@ -1,9 +1,12 @@
 package com.example.commercepaymentsystem.domain.order.service;
 
-import com.example.commercepaymentsystem.cart.entity.CartItem;
-import com.example.commercepaymentsystem.cart.repository.CartItemRepository;
+
 import com.example.commercepaymentsystem.common.exception.BusinessException;
 import com.example.commercepaymentsystem.common.exception.ErrorCode;
+import com.example.commercepaymentsystem.common.response.PageResponse;
+import com.example.commercepaymentsystem.domain.cart.entity.CartItem;
+import com.example.commercepaymentsystem.domain.cart.repository.CartItemRepository;
+import com.example.commercepaymentsystem.domain.member.service.MemberService;
 import com.example.commercepaymentsystem.domain.order.dto.OrderCreateRequest;
 import com.example.commercepaymentsystem.domain.order.dto.OrderCreateResponse;
 import com.example.commercepaymentsystem.domain.order.dto.OrderSummaryResponse;
@@ -14,6 +17,7 @@ import com.example.commercepaymentsystem.domain.order.repository.OrderRepository
 import com.example.commercepaymentsystem.domain.payment.entity.Payment;
 import com.example.commercepaymentsystem.domain.payment.entity.PaymentStatus;
 
+import com.example.commercepaymentsystem.domain.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageRequest;
