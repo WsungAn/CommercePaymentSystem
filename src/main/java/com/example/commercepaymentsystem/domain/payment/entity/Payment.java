@@ -1,5 +1,9 @@
 package com.example.commercepaymentsystem.domain.payment.entity;
 
+import com.example.commercepaymentsystem.common.entity.BaseEntity;
+import com.example.commercepaymentsystem.common.exception.BusinessException;
+import com.example.commercepaymentsystem.common.exception.ErrorCode;
+import com.example.commercepaymentsystem.domain.order.entity.Order;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -12,15 +16,14 @@ import java.time.LocalDateTime;
 @Table(name = "payments")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 
-// TODO: BASE 엔티티 추가, Order 만들어지면 import
-public class Payment {
+public class Payment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false, unique = true)
     private Order order;
 
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
@@ -33,8 +36,25 @@ public class Payment {
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
 
-    public Payment(Order order, int amout) {
+    public Payment(Order order, int amount) {
         this.order = order;
-        this.amount = amout;
+        this.amount = amount;
     }
+
+    public void markAsPaid() {
+        changeStatus(PaymentStatus.PAID);
+        this.paidAt = LocalDateTime.now();
+    }
+
+    public void markAsFailed() {
+        changeStatus(PaymentStatus.FAILED);
+    }
+
+    public void changeStatus(PaymentStatus status) {
+        if (!this.status.canTransitTo(status)) {
+            throw new BusinessException(ErrorCode.INVALID_PAYMENT_STATUS);
+        }
+        this.status = status;
+    }
+
 }
