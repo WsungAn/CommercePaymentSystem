@@ -27,8 +27,13 @@ public class MemberService {
         );
     }
 
-    public Member findById(Long memberId) {
+    public Member findByMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
+
     }
+
+
+
+
 }
