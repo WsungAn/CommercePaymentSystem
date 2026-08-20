@@ -1,5 +1,6 @@
 package com.example.commercepaymentsystem.domain.cart.fixture;
 
+import com.example.commercepaymentsystem.domain.cart.entity.Cart;
 import com.example.commercepaymentsystem.domain.member.entity.Member;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -18,6 +19,13 @@ public class MemberFixture {
         return member;
     }
 
+    public static Member createNewMemberWithId(
+            String name ,String email, String password, String phoneNumber, Long memberId)
+    {
+        Member member = new Member(name, email, password, phoneNumber);
+        ReflectionTestUtils.setField(member, "id", memberId);
+        return member;
+    }
 
 
 }
