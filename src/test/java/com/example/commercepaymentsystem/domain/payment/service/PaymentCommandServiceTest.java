@@ -136,8 +136,24 @@ public class PaymentCommandServiceTest {
         when(paymentService.findByOrderIdAndMemberId(request.orderId(), memberId)).thenReturn(payment);
 
         // when + then
+        // assertThatThrownBy() : 예외가 제대로 발생하는지 확인하는 테스트 메서드
         assertThatThrownBy(() -> paymentCommandService.tryPayment(request, memberId))
                 .isInstanceOf(BusinessException.class)
                 .hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_ORDER_STATUS);
+    }
+
+    @Test
+    @DisplayName("모의결제 실패 케이스 - 요청금액과 서버에 저장된 결제금액이 다른 경우 ")
+    void paymentAmountMismatch() {
+        // given
+        // 실결제금액: 10,000원 , 요청금액: 1,000원
+        PaymentRequest request = new PaymentRequest(1L, PaymentResult.SUCCESS, 1000);
+        when(orderService.findByIdAndMemberId(request.orderId(), memberId)).thenReturn(order);
+        when(paymentService.findByOrderIdAndMemberId(request.orderId(), memberId)).thenReturn(payment);
+
+        // when + then
+        assertThatThrownBy(() -> paymentCommandService.tryPayment(request, memberId))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.PAYMENT_AMOUNT_MISMATCH);
     }
 }
