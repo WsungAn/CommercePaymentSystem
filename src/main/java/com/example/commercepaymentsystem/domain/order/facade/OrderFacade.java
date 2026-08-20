@@ -108,7 +108,7 @@ public class OrderFacade {
         }
 
         List<Long> distinctIds = new HashSet<>(requestedIds).stream().toList();
-        List<CartItem> selectedItems = cartItemService.getCartItemSelected(cart, distinctIds);
+        List<CartItem> selectedItems = cartItemService.getCartItemSelected(cart.get(), distinctIds);
         if (selectedItems.size() != distinctIds.size()) {
             throw new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND);
         }
