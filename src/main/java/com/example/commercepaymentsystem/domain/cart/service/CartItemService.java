@@ -113,9 +113,9 @@ public class CartItemService {
         return cartItemRepository.findByCart(cart);
     }
 
-    // [ Order ] 사용자가 주문을 할 때 몇몇 상품들만 선택하여 주문
+    // [ Order ] 사용자가 주문을 할 때 몇몇 상품들(cartItem)만 선택하여 주문
     public List<CartItem> getCartItemSelected(
-            Cart cart, List<Long> distinctIds) {
-        return cartItemRepository.findSelectedForOrder(cart, distinctIds);
+            Cart cart, List<Long> cartItemIds) {
+        return cartItemRepository.findSelectedForOrder(cart, cartItemIds);
     }
 }
