@@ -17,7 +17,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     public MemberResponse getMe(Long memberId) {
-        Member member = findById(memberId);
+        Member member = findMember(memberId);
         return new MemberResponse(
                 member.getId(),
                 member.getName(),
@@ -27,7 +27,7 @@ public class MemberService {
         );
     }
 
-    public Member findByMember(Long memberId) {
+    public Member findMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.MEMBER_NOT_FOUND));
 
