@@ -157,18 +157,3 @@ public class OrderService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
     }
 }
-//findAllForOrder 메서드는
-//cartItemRepository 가 member_id가 없다보니
-//
-//Optional<Cart> cart = cartRepository.findById(memberId)
-//
-//먼저 cartRepository를 통해 memberId로 Cart를 가져오고
-//
-//List<CartItem> allItems =  cartItemRepository.findByCart(cart.get())
-//
-//이렇게 변경해야 될 거 같고
-//[오후 2:02]findSelectedForOrder 메서드는
-//findSelectedForOrder(cart, distinctIds)
-//
-//memberId 빼고 이렇게 하면 될 거 같아요
-//제가 메서드 하나 만들게요 (편집됨)
