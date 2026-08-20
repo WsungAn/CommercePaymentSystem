@@ -4,6 +4,10 @@ package com.example.commercepaymentsystem.domain.order.service;
 import com.example.commercepaymentsystem.common.exception.BusinessException;
 import com.example.commercepaymentsystem.common.exception.ErrorCode;
 import com.example.commercepaymentsystem.common.response.PageResponse;
+import com.example.commercepaymentsystem.domain.cart.entity.Cart;
+import com.example.commercepaymentsystem.domain.cart.entity.CartItem;
+import com.example.commercepaymentsystem.domain.cart.repository.CartItemRepository;
+import com.example.commercepaymentsystem.domain.cart.repository.CartRepository;
 import com.example.commercepaymentsystem.domain.member.service.MemberService;
 import com.example.commercepaymentsystem.domain.order.dto.OrderCreateRequest;
 import com.example.commercepaymentsystem.domain.order.dto.OrderCreateResponse;
@@ -20,12 +24,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.lang.reflect.Member;
+import com.example.commercepaymentsystem.domain.member.entity.Member;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -38,6 +42,7 @@ public class OrderService {
 
     private final MemberService memberService;
     private final CartItemRepository cartItemRepository;
+    private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
     private final PaymentRepository paymentRepository;
 
@@ -64,7 +69,7 @@ public class OrderService {
 
         Order order = new Order(member, generateOrderNumber(), totalPrice, orderItems);
         Order savedOrder = orderRepository.save(order);
-        paymentRepository.save(new Payment(savedOrder, totalPrice));
+        paymentRepository.save(new Payment(Order order,int amount, Member member));
         return OrderCreateResponse.from(savedOrder);
     }
 
@@ -106,8 +111,11 @@ public class OrderService {
     }
 
     private List<CartItem> loadCartItems(Long memberId, List<Long> requestedIds) {
+        Optional<Cart> cart =
+                cartRepository.findById(memberId);
+
         if (requestedIds.isEmpty()) {
-            List<CartItem> allItems = cartItemRepository.findAllForOrder(memberId);
+            List<CartItem> allItems =  cartItemRepository.findByCart(cart.get());
             if (allItems.isEmpty()) {
                 throw new BusinessException(ErrorCode.CART_EMPTY);
             }
@@ -115,7 +123,7 @@ public class OrderService {
         }
 
         List<Long> distinctIds = new HashSet<>(requestedIds).stream().toList();
-        List<CartItem> selectedItems = cartItemRepository.findSelectedForOrder(memberId, distinctIds);
+        List<CartItem> selectedItems = cartItemRepository.findSelectedForOrder(cart, distinctIds);
         if (selectedItems.size() != distinctIds.size()) {
             throw new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND);
         }
@@ -149,3 +157,18 @@ public class OrderService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
     }
 }
+//findAllForOrder 메서드는
+//cartItemRepository 가 member_id가 없다보니
+//
+//Optional<Cart> cart = cartRepository.findById(memberId)
+//
+//먼저 cartRepository를 통해 memberId로 Cart를 가져오고
+//
+//List<CartItem> allItems =  cartItemRepository.findByCart(cart.get())
+//
+//이렇게 변경해야 될 거 같고
+//[오후 2:02]findSelectedForOrder 메서드는
+//findSelectedForOrder(cart, distinctIds)
+//
+//memberId 빼고 이렇게 하면 될 거 같아요
+//제가 메서드 하나 만들게요 (편집됨)
