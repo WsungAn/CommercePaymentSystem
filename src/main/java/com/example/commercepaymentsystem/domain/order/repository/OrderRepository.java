@@ -1,6 +1,7 @@
 package com.example.commercepaymentsystem.domain.order.repository;
 
 import com.example.commercepaymentsystem.domain.order.entity.Order;
+import com.example.commercepaymentsystem.domain.payment.entity.Payment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @EntityGraph(attributePaths = {"orderItems", "orderItems.product"})
     Optional<Order> findWithItemsByIdAndMemberId(Long id, Long memberId);
+
+
 }
