@@ -1,6 +1,6 @@
-package com.example.commercepaymentsystem.cart.repository;
+package com.example.commercepaymentsystem.domain.cart.repository;
 
-import com.example.commercepaymentsystem.cart.entity.Cart;
+import com.example.commercepaymentsystem.domain.cart.entity.Cart;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
