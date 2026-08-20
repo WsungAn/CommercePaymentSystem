@@ -6,12 +6,15 @@ import com.example.commercepaymentsystem.common.exception.BusinessException;
 import com.example.commercepaymentsystem.common.exception.ErrorCode;
 import com.example.commercepaymentsystem.domain.order.dto.OrderCreateRequest;
 import com.example.commercepaymentsystem.domain.order.dto.OrderCreateResponse;
+import com.example.commercepaymentsystem.domain.order.dto.OrderSummaryResponse;
 import com.example.commercepaymentsystem.domain.order.entity.Order;
 import com.example.commercepaymentsystem.domain.order.entity.OrderItem;
 import com.example.commercepaymentsystem.domain.order.repository.OrderRepository;
 import com.example.commercepaymentsystem.domain.payment.entity.Payment;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Member;
@@ -59,6 +62,16 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
         paymentRepository.save(new Payment(savedOrder, totalPrice));
         return OrderCreateResponse.from(savedOrder);
+    }
+
+    public PageResponse<OrderSummaryResponse> getMyOrders(Long memberId, int page, int size) {
+        return PageResponse.of(
+                orderRepository.findByMemberIdOrderByCreatedAtDesc(
+                        memberId,
+                        PageRequest.of(page, size)
+                ),
+                OrderSummaryResponse::from
+        );
     }
 
     private List<CartItem> loadCartItems(Long memberId, List<Long> requestedIds) {
