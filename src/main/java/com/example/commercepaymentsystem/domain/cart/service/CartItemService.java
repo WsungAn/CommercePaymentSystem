@@ -57,7 +57,7 @@ public class CartItemService {
 
         // 장바구니는 존재하지만 안에 상품이 하나도 없을 경우
         if (cartItems.isEmpty()) {
-            return new CartResponse(null, 0);
+            return new CartResponse(List.of(), 0);
         }
 
         // 장바구니에 들어있는 상품들의 총 가격을 구함
