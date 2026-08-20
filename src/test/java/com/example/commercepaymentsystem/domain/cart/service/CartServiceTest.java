@@ -1,8 +1,8 @@
 package com.example.commercepaymentsystem.domain.cart.service;
 
 import com.example.commercepaymentsystem.domain.cart.entity.Cart;
-import com.example.commercepaymentsystem.domain.cart.fixture.CartFixture;
-import com.example.commercepaymentsystem.domain.cart.fixture.MemberFixture;
+import com.example.commercepaymentsystem.domain.fixture.CartFixture;
+import com.example.commercepaymentsystem.domain.fixture.MemberFixture;
 import com.example.commercepaymentsystem.domain.cart.repository.CartRepository;
 import com.example.commercepaymentsystem.domain.member.entity.Member;
 import org.junit.jupiter.api.DisplayName;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 import org.mockito.junit.jupiter.MockitoExtension;
