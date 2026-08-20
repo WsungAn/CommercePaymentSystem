@@ -4,11 +4,11 @@ import com.example.commercepaymentsystem.common.exception.BusinessException;
 import com.example.commercepaymentsystem.domain.cart.dto.CartResponse;
 import com.example.commercepaymentsystem.domain.cart.entity.Cart;
 import com.example.commercepaymentsystem.domain.cart.entity.CartItem;
-import com.example.commercepaymentsystem.domain.cart.fixture.CartFixture;
-import com.example.commercepaymentsystem.domain.cart.fixture.CartItemFixture;
-import com.example.commercepaymentsystem.domain.cart.fixture.MemberFixture;
-import com.example.commercepaymentsystem.domain.cart.fixture.ProductFixture;
 import com.example.commercepaymentsystem.domain.cart.repository.CartItemRepository;
+import com.example.commercepaymentsystem.domain.fixture.CartFixture;
+import com.example.commercepaymentsystem.domain.fixture.CartItemFixture;
+import com.example.commercepaymentsystem.domain.fixture.MemberFixture;
+import com.example.commercepaymentsystem.domain.fixture.ProductFixture;
 import com.example.commercepaymentsystem.domain.member.entity.Member;
 import com.example.commercepaymentsystem.domain.product.entity.Product;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
-import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
