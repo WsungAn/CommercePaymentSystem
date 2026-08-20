@@ -3,6 +3,7 @@ package com.example.commercepaymentsystem.domain.payment.entity;
 import com.example.commercepaymentsystem.common.entity.BaseEntity;
 import com.example.commercepaymentsystem.common.exception.BusinessException;
 import com.example.commercepaymentsystem.common.exception.ErrorCode;
+import com.example.commercepaymentsystem.domain.member.entity.Member;
 import com.example.commercepaymentsystem.domain.order.entity.Order;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -26,6 +27,10 @@ public class Payment extends BaseEntity {
     @JoinColumn(name = "order_id", nullable = false, unique = true)
     private Order order;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
     @Column(nullable = false, columnDefinition = "INT UNSIGNED")
     private int amount;
 
@@ -36,9 +41,10 @@ public class Payment extends BaseEntity {
     @Column(name = "paid_at")
     private LocalDateTime paidAt;
 
-    public Payment(Order order, int amount) {
+    public Payment(Order order, int amount, Member member) {
         this.order = order;
         this.amount = amount;
+        this.member = member;
     }
 
     public void markAsPaid() {

@@ -80,4 +80,23 @@ public class Order extends BaseEntity {
         this.cancelledAt = LocalDateTime.now();
     }
 
+    // CONFIRMED로 변경
+    public void markAsConfirmed() {
+        changeStatus(OrderStatus.CONFIRMED);
+    }
+
+    // CANCELLED로 변경
+    public void markAsCancelled() {
+        changeStatus(OrderStatus.CANCELLED);
+    }
+
+
+    // 주문 상태 변경
+    private void changeStatus(OrderStatus status) {
+        if (!this.status.canTransitTo(status)) {
+            throw new BusinessException(ErrorCode.INVALID_ORDER_STATUS);
+        }
+        this.status = status;
+    }
+
 }

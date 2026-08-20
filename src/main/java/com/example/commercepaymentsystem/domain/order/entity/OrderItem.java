@@ -1,6 +1,7 @@
 package com.example.commercepaymentsystem.domain.order.entity;
 
 
+import com.example.commercepaymentsystem.domain.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
