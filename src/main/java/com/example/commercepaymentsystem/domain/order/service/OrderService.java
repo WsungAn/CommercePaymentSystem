@@ -7,10 +7,12 @@ import com.example.commercepaymentsystem.common.exception.ErrorCode;
 import com.example.commercepaymentsystem.domain.order.dto.OrderCreateRequest;
 import com.example.commercepaymentsystem.domain.order.dto.OrderCreateResponse;
 import com.example.commercepaymentsystem.domain.order.dto.OrderSummaryResponse;
+import com.example.commercepaymentsystem.domain.order.dto.OrderCancelResponse;
 import com.example.commercepaymentsystem.domain.order.entity.Order;
 import com.example.commercepaymentsystem.domain.order.entity.OrderItem;
 import com.example.commercepaymentsystem.domain.order.repository.OrderRepository;
 import com.example.commercepaymentsystem.domain.payment.entity.Payment;
+import com.example.commercepaymentsystem.domain.payment.entity.PaymentStatus;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -72,6 +74,33 @@ public class OrderService {
                 ),
                 OrderSummaryResponse::from
         );
+    }
+
+    @Transactional
+    public OrderCancelResponse cancelOrder(Long memberId, Long orderId, String reason) {
+        Order order = findOwnedOrderWithItems(memberId, orderId);
+        Payment payment = paymentRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
+
+        if (payment.getStatus() == PaymentStatus.IN_PROGRESS) {
+            payment.markAsFailed();
+        } else if (payment.getStatus() == PaymentStatus.PAID) {
+            payment.markAsCancelled();
+        } else {
+            throw new BusinessException(ErrorCode.INVALID_PAYMENT_STATUS);
+        }
+
+        order.cancel(reason);
+        order.getOrderItems().forEach(orderItem ->
+                orderItem.getProduct().restoreStock(orderItem.getQuantity()));
+        return OrderCancelResponse.of(order, payment);
+    }
+
+    private Order findOwnedOrderWithItems(Long memberId, Long orderId) {
+        return orderRepository.findWithItemsByIdAndMemberId(orderId, memberId)
+                .orElseThrow(() -> orderRepository.existsById(orderId)
+                        ? new BusinessException(ErrorCode.NO_AUTHORITY)
+                        : new BusinessException(ErrorCode.ORDER_NOT_FOUND));
     }
 
     private List<CartItem> loadCartItems(Long memberId, List<Long> requestedIds) {
