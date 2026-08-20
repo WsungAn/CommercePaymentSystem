@@ -3,6 +3,7 @@ package com.example.commercepaymentsystem.domain.payment.service;
 import com.example.commercepaymentsystem.common.exception.BusinessException;
 import com.example.commercepaymentsystem.common.exception.ErrorCode;
 import com.example.commercepaymentsystem.domain.order.entity.Order;
+import com.example.commercepaymentsystem.domain.payment.dto.PaymentDetailResponse;
 import com.example.commercepaymentsystem.domain.payment.entity.Payment;
 import com.example.commercepaymentsystem.domain.payment.entity.PaymentStatus;
 import com.example.commercepaymentsystem.domain.payment.repository.PaymentRepository;
@@ -20,14 +21,13 @@ public class PaymentService {
     // 주문 생성시 결제 생성
     @Transactional
     public Payment createPayment(Order order, int amount) {
-        Payment payment = new Payment(order, amount);
+        Payment payment = new Payment(order, amount, order.getMember());
         return paymentRepository.save(payment);
     }
 
-    // 주문 단건 조회 화면에서 결제 ID 한건만 필요한지? -> 필요하다면 추후 id만 조회하는걸로변경
-    // 결제 시도시 주문 ID로 결제정보조회
-    public Payment findByOrderId(Long orderId) {
-        return paymentRepository.findByOrderId(orderId)
+    // 결제 시도시 주문 ID로 결제정보조회 및 소유권 검증
+    public Payment findByOrderIdAndMemberId(Long orderId, Long memberId) {
+        return paymentRepository.findByOrderIdAndMemberId(orderId, memberId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
     }
 
@@ -41,6 +41,12 @@ public class PaymentService {
     @Transactional
     public void failPayment(Payment payment) {
         payment.markAsFailed();
+    }
+
+    // 결제 단건 조회 기능
+    public PaymentDetailResponse getPayment(Long orderId, Long memberId) {
+        Payment payment = findByOrderIdAndMemberId(orderId, memberId);
+        return PaymentDetailResponse.from(payment);
     }
 
 }
