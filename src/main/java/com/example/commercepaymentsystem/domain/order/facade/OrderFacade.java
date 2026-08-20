@@ -3,14 +3,29 @@ package com.example.commercepaymentsystem.domain.order.facade;
 import com.example.commercepaymentsystem.common.exception.BusinessException;
 import com.example.commercepaymentsystem.common.exception.ErrorCode;
 
+import com.example.commercepaymentsystem.domain.cart.entity.Cart;
 import com.example.commercepaymentsystem.domain.cart.entity.CartItem;
+import com.example.commercepaymentsystem.domain.cart.service.CartItemService;
 import com.example.commercepaymentsystem.domain.cart.service.CartService;
+import com.example.commercepaymentsystem.domain.member.entity.Member;
+import com.example.commercepaymentsystem.domain.member.service.MemberService;
+import com.example.commercepaymentsystem.domain.order.dto.OrderCancelResponse;
+import com.example.commercepaymentsystem.domain.order.dto.OrderCreateRequest;
+import com.example.commercepaymentsystem.domain.order.dto.OrderCreateResponse;
 import com.example.commercepaymentsystem.domain.order.dto.OrderPreviewResponse;
+import com.example.commercepaymentsystem.domain.order.entity.Order;
+import com.example.commercepaymentsystem.domain.order.entity.OrderItem;
+import com.example.commercepaymentsystem.domain.order.service.OrderService;
+import com.example.commercepaymentsystem.domain.payment.entity.Payment;
+import com.example.commercepaymentsystem.domain.payment.entity.PaymentStatus;
+import com.example.commercepaymentsystem.domain.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -20,12 +35,17 @@ import java.util.List;
 //orderfacade는 카트보다 오더 도메인 쪽에 있는게 맞다
 public class OrderFacade {
     private final CartService cartService;
+    private final PaymentService paymentService;
+    private final CartItemService cartItemService;
+    private final MemberService memberService;
+    private final OrderService orderService;
+
 
     public OrderPreviewResponse getCheckout(Long memberId, List<Long> cartItemIds) {
 //주문서 미리보기 -> 재고 차감/ 주문 생성 없는 읽기 전용
         //cartItemIds 가 비어있으면 null -> 전체 장바구니를 의미 , 값이 있으면 선택된 아이템만 주문서에 담는다
 
-        List<CartItem> cartItems =getValidateCartitems(
+        List<CartItem> cartItems =getValidateCartItems(
                 memberId, cartItemIds != null ? cartItemIds : List.of()  //null 세이프 하게 짠 코드
         );
         //장바구니 아이템에서 상품 가격과 장바구니 수량을 곱해서 각 이ㅏ이템의 총액을 구한다.
@@ -51,7 +71,7 @@ public class OrderFacade {
         return new OrderPreviewResponse(items, totalPrice);
     }
 
-    private List<CartItem> getValidateCartitems(Long memberId, List<Long> cartItemIds) {
+    private List<CartItem> getValidateCartItems(Long memberId, List<Long> cartItemIds) {
         //cartItemIds 가 비어있으면 -> 전체 장바구니 , 아니면 선택된 아이템만  조회
         List<CartItem> cartItems = cartItemIds.isEmpty()
                 ? cartService.findCartEntities(memebrId)   //member는 소유권을 위해 던져주기 /장바구니 전체를 다 찾아서
@@ -70,5 +90,72 @@ public class OrderFacade {
             throw new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND);
         }
         return cartItems;
+    }
+
+    private List<CartItem> loadCartItems(Long memberId, List<Long> requestedIds) {
+        Optional<Cart> cart =
+                cartService.getCart(memberId);
+
+        if (cart.isEmpty()) {
+            throw new BusinessException(ErrorCode.CART_EMPTY);
+        }
+        if (requestedIds.isEmpty()) {
+            List<CartItem> allItems =  cartItemService.getCartItem(cart.get());
+            if (allItems.isEmpty()) {
+                throw new BusinessException(ErrorCode.CART_EMPTY);
+            }
+            return allItems;
+        }
+
+        List<Long> distinctIds = new HashSet<>(requestedIds).stream().toList();
+        List<CartItem> selectedItems = cartItemService.getCartItemSelected(cart, distinctIds);
+        if (selectedItems.size() != distinctIds.size()) {
+            throw new BusinessException(ErrorCode.CART_ITEM_NOT_FOUND);
+        }
+        return selectedItems;
+    }
+
+    public OrderCancelResponse cancelOrder(Long memberId, Long orderId, String reason) {
+        Order order = orderService.findOwnedOrderWithItems(memberId, orderId);
+        Payment payment = paymentService.findByOrderIdAndMemberId(orderId, memberId);
+
+        if (payment.getStatus() == PaymentStatus.IN_PROGRESS) {
+            paymentService.failPayment(payment);
+        } else if (payment.getStatus() == PaymentStatus.PAID) {
+           paymentService.cancelPayment(payment);
+        } else {
+            throw new BusinessException(ErrorCode.INVALID_PAYMENT_STATUS);
+        }
+
+        order.cancel(reason);
+        order.getOrderItems().forEach(orderItem ->
+                orderItem.getProduct().restoreStock(orderItem.getQuantity()));
+        return OrderCancelResponse.of(order, payment);
+    }
+
+
+    public OrderCreateResponse createOrder(Long memberId, OrderCreateRequest request) {
+        Member member = memberService.findMember(memberId);
+        List<CartItem> cartItems = loadCartItems(memberId, request.cartItemIds());
+
+        List<OrderItem> orderItems = cartItems.stream()
+                .map(cartItem -> {
+                    cartItem.getProduct().deductStock(cartItem.getQuantity());
+                    return new OrderItem(
+                            cartItem.getProduct(),
+                            cartItem.getProduct().getName(),
+                            cartItem.getProduct().getPrice(),
+                            cartItem.getQuantity()
+                    );
+                })
+                .toList();
+
+        int totalPrice = orderItems.stream()
+                .mapToInt(OrderItem::getLineTotal)
+                .reduce(0, Math::addExact);
+
+        Order order = orderService.createOrder(member ,totalPrice, orderItems);
+        paymentService.createPayment(order,totalPrice);
+        return OrderCreateResponse.from(order);
     }
 }

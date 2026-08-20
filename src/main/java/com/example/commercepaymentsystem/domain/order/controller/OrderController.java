@@ -36,7 +36,7 @@ public class OrderController {
                 request == null ? new OrderCreateRequest(null) : request;
 
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.ok(orderService.createOrder(memberId, safeRequest)));
+                .body(ApiResponse.ok(orderFacade.createOrder(memberId,safeRequest)));
     }
 
     @GetMapping
