@@ -1,5 +1,7 @@
 package com.example.commercepaymentsystem.domain.payment.service;
 
+import com.example.commercepaymentsystem.common.exception.BusinessException;
+import com.example.commercepaymentsystem.common.exception.ErrorCode;
 import com.example.commercepaymentsystem.domain.cart.entity.Cart;
 import com.example.commercepaymentsystem.domain.fixture.*;
 import com.example.commercepaymentsystem.domain.cart.service.CartItemService;
@@ -25,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -106,5 +109,35 @@ public class PaymentCommandServiceTest {
         verify(paymentService).failPayment(payment);
         verify(orderService).cancelOrder(order);
         assertThat(product.getStock()).isEqualTo(initialStock + orderItem.getQuantity());
+    }
+
+    @Test
+    @DisplayName("모의결제 실패 케이스 - 결제상태가 잘못됐을 경우")
+    void badPaymentStatus() {
+        // given
+        PaymentRequest request = new PaymentRequest(1L, PaymentResult.SUCCESS, 10000);
+        when(orderService.findByIdAndMemberId(request.orderId(), memberId)).thenReturn(order);
+        payment.markAsPaid();
+        when(paymentService.findByOrderIdAndMemberId(request.orderId(), memberId)).thenReturn(payment);
+
+        // when + then
+        assertThatThrownBy(() -> paymentCommandService.tryPayment(request, memberId))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_PAYMENT_STATUS);
+    }
+
+    @Test
+    @DisplayName("모의결제 실패 케이스 - 주문상태가 잘못됐을 경우")
+    void badOrderStatus() {
+        // given
+        PaymentRequest request = new PaymentRequest(1L, PaymentResult.SUCCESS, 10000);
+        when(orderService.findByIdAndMemberId(request.orderId(), memberId)).thenReturn(order);
+        order.markAsCancelled();
+        when(paymentService.findByOrderIdAndMemberId(request.orderId(), memberId)).thenReturn(payment);
+
+        // when + then
+        assertThatThrownBy(() -> paymentCommandService.tryPayment(request, memberId))
+                .isInstanceOf(BusinessException.class)
+                .hasFieldOrPropertyWithValue("errorCode", ErrorCode.INVALID_ORDER_STATUS);
     }
 }
