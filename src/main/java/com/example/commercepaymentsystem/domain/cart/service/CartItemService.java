@@ -108,4 +108,14 @@ public class CartItemService {
         cartItemRepository.deleteAllByCart(cart);
     }
 
+    // [Order] 사용자가 주문을 할 때 전체 장바구나애 았는 모든 상품을 주문
+    public List<CartItem> getCartItem(Cart cart) {
+        return cartItemRepository.findByCart(cart);
+    }
+
+    // [ Order ] 사용자가 주문을 할 때 몇몇 상품들만 선택하여 주문
+    public List<CartItem> getCartItemSelected(
+            Cart cart, List<Long> distinctIds) {
+        return cartItemRepository.findSelectedForOrder(cart, distinctIds);
+    }
 }
