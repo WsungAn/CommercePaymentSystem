@@ -56,6 +56,10 @@ public class Payment extends BaseEntity {
         changeStatus(PaymentStatus.FAILED);
     }
 
+    public void markAsCancelled() {
+        changeStatus(PaymentStatus.CANCELLED);
+    }
+
     public void changeStatus(PaymentStatus status) {
         if (!this.status.canTransitTo(status)) {
             throw new BusinessException(ErrorCode.INVALID_PAYMENT_STATUS);

@@ -43,6 +43,12 @@ public class PaymentService {
         payment.markAsFailed();
     }
 
+    // 결제 상태 변경 - CANCELLED
+    @Transactional
+    public void cancelPayment(Payment payment) {
+        payment.markAsCancelled();
+    }
+
     // 결제 단건 조회 기능
     public PaymentDetailResponse getPayment(Long orderId, Long memberId) {
         Payment payment = findByOrderIdAndMemberId(orderId, memberId);
