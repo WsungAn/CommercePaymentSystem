@@ -5,7 +5,6 @@ import com.example.commercepaymentsystem.common.exception.ErrorCode;
 import com.example.commercepaymentsystem.domain.order.entity.Order;
 import com.example.commercepaymentsystem.domain.payment.dto.PaymentDetailResponse;
 import com.example.commercepaymentsystem.domain.payment.entity.Payment;
-import com.example.commercepaymentsystem.domain.payment.entity.PaymentStatus;
 import com.example.commercepaymentsystem.domain.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

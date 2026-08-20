@@ -1,4 +1,4 @@
-package com.example.commercepaymentsystem.domain.cart.fixture;
+package com.example.commercepaymentsystem.domain.fixture;
 
 import com.example.commercepaymentsystem.domain.cart.entity.Cart;
 import com.example.commercepaymentsystem.domain.cart.entity.CartItem;

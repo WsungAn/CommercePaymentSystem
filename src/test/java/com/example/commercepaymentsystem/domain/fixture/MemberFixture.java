@@ -1,4 +1,4 @@
-package com.example.commercepaymentsystem.domain.cart.fixture;
+package com.example.commercepaymentsystem.domain.fixture;
 
 import com.example.commercepaymentsystem.domain.member.entity.Member;
 import org.springframework.test.util.ReflectionTestUtils;
