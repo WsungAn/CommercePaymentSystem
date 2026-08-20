@@ -2,12 +2,10 @@ package com.example.commercepaymentsystem.domain.order.controller;
 
 import com.example.commercepaymentsystem.common.response.ApiResponse;
 import com.example.commercepaymentsystem.common.response.PageResponse;
-import com.example.commercepaymentsystem.domain.order.dto.OrderCreateRequest;
-import com.example.commercepaymentsystem.domain.order.dto.OrderCreateResponse;
-import com.example.commercepaymentsystem.domain.order.dto.OrderPreviewResponse;
-import com.example.commercepaymentsystem.domain.order.dto.OrderSummaryResponse;
+import com.example.commercepaymentsystem.domain.order.dto.*;
 import com.example.commercepaymentsystem.domain.order.facade.OrderFacade;
 import com.example.commercepaymentsystem.domain.order.service.OrderService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -56,5 +54,25 @@ public class OrderController {
             @RequestParam(required = false)List<Long> cartItemIds
             ) {
         return ResponseEntity.ok(ApiResponse.ok(orderFacade.getCheckout(memberId, cartItemIds)));
+    }
+
+    @PostMapping("/{orderId}/cancel")
+    public ResponseEntity<ApiResponse<OrderCancelResponse>> cancelOrder(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long orderId,
+            @RequestBody(required = false)
+            @Valid OrderCancelRequest request
+    ) {
+        String reason = request == null ? null : request.reason();
+
+        return ResponseEntity.ok(
+                ApiResponse.ok(
+                        orderFacade.cancelOrder(
+                                memberId,
+                                orderId,
+                                reason
+                        )
+                )
+        );
     }
 }
