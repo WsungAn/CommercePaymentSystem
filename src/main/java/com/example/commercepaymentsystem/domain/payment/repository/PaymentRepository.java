@@ -3,5 +3,8 @@ package com.example.commercepaymentsystem.domain.payment.repository;
 import com.example.commercepaymentsystem.domain.payment.entity.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface PaymentRespository extends JpaRepository<Payment, Long> {
+import java.util.Optional;
+
+public interface PaymentRepository extends JpaRepository<Payment, Long> {
+    Optional<Payment> findByOrderId(Long orderId);
 }

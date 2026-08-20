@@ -27,7 +27,7 @@ public enum PaymentStatus {
         public boolean canTransitTo(PaymentStatus target) {
             return false;
         }
-    }
+    };
 
     public abstract boolean canTransitTo(PaymentStatus target);
 }
