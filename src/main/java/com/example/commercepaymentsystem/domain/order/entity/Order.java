@@ -1,7 +1,7 @@
 package com.example.commercepaymentsystem.domain.order.entity;
 
 import com.example.commercepaymentsystem.common.entity.BaseEntity;
-import com.example.commercepaymentsystem.domain.order.entity.OrderStatus;
+import com.example.commercepaymentsystem.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,6 +20,9 @@ public class Order extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "order_number", nullable = false, unique = true, length = 40)
+    private String orderNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
@@ -34,8 +37,9 @@ public class Order extends BaseEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    public Order(Member member, int totalPrice, List<OrderItem> orderItems) {
+    public Order(Member member, String orderNumber, int totalPrice, List<OrderItem> orderItems) {
         this.member = member;
+        this.orderNumber = orderNumber;
         this.totalPrice = totalPrice;
         orderItems.forEach(this::addOrderItem);
     }
