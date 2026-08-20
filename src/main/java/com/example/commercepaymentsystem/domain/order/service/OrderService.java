@@ -4,6 +4,8 @@ import com.example.commercepaymentsystem.cart.entity.CartItem;
 import com.example.commercepaymentsystem.cart.repository.CartItemRepository;
 import com.example.commercepaymentsystem.common.exception.BusinessException;
 import com.example.commercepaymentsystem.common.exception.ErrorCode;
+import com.example.commercepaymentsystem.common.response.PageResponse;
+import com.example.commercepaymentsystem.domain.member.service.MemberService;
 import com.example.commercepaymentsystem.domain.order.dto.OrderCreateRequest;
 import com.example.commercepaymentsystem.domain.order.dto.OrderCreateResponse;
 import com.example.commercepaymentsystem.domain.order.dto.OrderSummaryResponse;
@@ -14,6 +16,7 @@ import com.example.commercepaymentsystem.domain.order.repository.OrderRepository
 import com.example.commercepaymentsystem.domain.payment.entity.Payment;
 import com.example.commercepaymentsystem.domain.payment.entity.PaymentStatus;
 
+import com.example.commercepaymentsystem.domain.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageRequest;
@@ -127,5 +130,23 @@ public class OrderService {
                     + "-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         } while (orderRepository.existsByOrderNumber(orderNumber));
         return orderNumber;
+    }
+
+    // 주문 상태 변경 - CONFIRMED
+    @Transactional
+    public void confirmOrder(Order order) {
+        order.markAsConfirmed();
+    }
+
+    // 주문 상태 변경 - CANCELLED
+    @Transactional
+    public void cancelOrder(Order order) {
+        order.markAsCancelled();
+    }
+
+    // 주문시도 로직에 필요 - 본인소유주문인지 조회
+    public Order findByIdAndMemberId(Long orderId, Long memberId) {
+        return orderRepository.findWithItemsByIdAndMemberId(orderId, memberId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
     }
 }

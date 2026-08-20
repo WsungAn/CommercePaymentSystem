@@ -2,10 +2,13 @@ package com.example.commercepaymentsystem.domain.payment.service;
 
 import com.example.commercepaymentsystem.common.exception.BusinessException;
 import com.example.commercepaymentsystem.common.exception.ErrorCode;
+import com.example.commercepaymentsystem.domain.cart.entity.Cart;
+import com.example.commercepaymentsystem.domain.cart.service.CartItemService;
 import com.example.commercepaymentsystem.domain.cart.service.CartService;
 import com.example.commercepaymentsystem.domain.order.entity.Order;
 import com.example.commercepaymentsystem.domain.order.entity.OrderItem;
 import com.example.commercepaymentsystem.domain.order.entity.OrderStatus;
+import com.example.commercepaymentsystem.domain.order.service.OrderService;
 import com.example.commercepaymentsystem.domain.payment.dto.PaymentRequest;
 import com.example.commercepaymentsystem.domain.payment.dto.PaymentResponse;
 import com.example.commercepaymentsystem.domain.payment.entity.Payment;
@@ -16,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class PaymentCommandService {
@@ -23,12 +28,12 @@ public class PaymentCommandService {
     private final PaymentService paymentService;
     private final OrderService orderService;
     private final CartService cartService;
+    private final CartItemService cartItemService;
 
     @Transactional
     public PaymentResponse tryPayment(PaymentRequest request, Long memberId) {
 
         // 1. 무엇을 조회? - 본인 소유 주문인지 조회
-        // TODO : OrderService에서 본인 소유 주문(본인소유검증까지 같이) 조회 메서드 필요
         Order order = orderService.findByIdAndMemberId(request.orderId(), memberId);
 
         // 2. 무엇을 검증? - 주문상태 = 결제대기 / 결제 상태 = 대기 인가
@@ -55,7 +60,13 @@ public class PaymentCommandService {
             orderService.confirmOrder(order); // 4-2)
             // cartService에 장바구니 비우는 메서드를 만들지 or cartItem의 메서드를 활용할지 의논 필요
             // cartItemService를 활용할 경우 cartService에서 Cart 가져오기, cartItemService에서 cartItem 삭제
-            cartService.clearCart(); // 4-3)
+            Optional<Cart> cart = cartService.getCart(memberId);// 4-3)
+            if (cart.isEmpty()) {
+                throw new BusinessException(ErrorCode.CART_EMPTY);
+            }
+            cartItemService.deleteCartItems(cart.get());
+
+
         }
 
         // 5. FAIL이면 무엇을 변경?
@@ -65,7 +76,7 @@ public class PaymentCommandService {
         if (request.result() == PaymentResult.FAIL) {
             paymentService.failPayment(payment); // 5-1)
             // TODO : OrderSerive에 주문상태 바꾸는 메서드 필요
-            orderService.failOrder(order); // 5-2)
+            orderService.cancelOrder(order); // 5-2)
             restoreStock(order); // 5-3)
         }
 
