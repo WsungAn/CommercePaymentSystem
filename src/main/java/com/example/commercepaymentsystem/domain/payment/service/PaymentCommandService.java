@@ -56,10 +56,7 @@ public class PaymentCommandService {
         //  4-3)장바구니 비우기
         if (request.result() == PaymentResult.SUCCESS) {
             paymentService.confirmPayment(payment); // 4-1)
-            // TODO: OrderService에 주문상태 바꾸는 메서드 필요
             orderService.confirmOrder(order); // 4-2)
-            // cartService에 장바구니 비우는 메서드를 만들지 or cartItem의 메서드를 활용할지 의논 필요
-            // cartItemService를 활용할 경우 cartService에서 Cart 가져오기, cartItemService에서 cartItem 삭제
             Optional<Cart> cart = cartService.getCart(memberId);// 4-3)
             if (cart.isEmpty()) {
                 throw new BusinessException(ErrorCode.CART_EMPTY);
@@ -75,7 +72,6 @@ public class PaymentCommandService {
         //  5-3)선차감 재고 전량 복구
         if (request.result() == PaymentResult.FAIL) {
             paymentService.failPayment(payment); // 5-1)
-            // TODO : OrderSerive에 주문상태 바꾸는 메서드 필요
             orderService.cancelOrder(order); // 5-2)
             restoreStock(order); // 5-3)
         }
@@ -83,7 +79,6 @@ public class PaymentCommandService {
         return new PaymentResponse(payment.getStatus(), order.getStatus());
     }
 
-    // OrderItem에 quantity 필드 필요
     private void restoreStock(Order order) {
         for (OrderItem item : order.getOrderItems()) {
             Product product = item.getProduct();

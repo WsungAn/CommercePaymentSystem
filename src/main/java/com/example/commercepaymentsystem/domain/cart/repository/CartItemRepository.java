@@ -60,4 +60,17 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     WHERE c.cart = :cart
 """)
     void deleteAllByCart(@Param("cart") Cart cart);
+
+    // 장바구니에서 주문을 할 때 몇몇 상품들만 선택하여 주문을 하면 productId List를 전달 받는다.
+    // Cart id와 productId List를 기준으로 CartItem을 조회함
+    @Query("""
+    SELECT c
+    FROM CartItem c
+    LEFT JOIN FETCH c.product p
+    WHERE c.cart = :cart AND c.product.id IN :productIds
+""")
+    List<CartItem> findSelectedForOrder(
+            @Param("cart") Cart cart,
+            @Param("productIds")  List<Long> productIds);
+
 }
