@@ -48,6 +48,7 @@ public class OrderController {
         return ResponseEntity.ok(ApiResponse.ok(orderService.getMyOrders(memberId, page, size)));
     }
 
+    // 주문하기 전 결제 미리보기 창을 보여줌 ( get이기 때문에 프론트에서 cartItemId를 body로 보내지 않고 쿼리 파라미터로 보냄)
     @GetMapping("/checkout")
     public ResponseEntity<ApiResponse<OrderPreviewResponse>> checkout(
             @AuthenticationPrincipal Long memberId, //멤버 토큰 꺼내오기
