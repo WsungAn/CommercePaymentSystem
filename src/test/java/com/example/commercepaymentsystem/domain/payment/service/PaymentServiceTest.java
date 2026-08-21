@@ -44,7 +44,7 @@ public class PaymentServiceTest {
         Long orderId = 10L;
         Order order = OrderFixture.createOrderWithId(member, orderItems, orderId);
         Payment payment = PaymentFixture.createPayment(order, member);
-        when(paymentRepository.findByOrderIdAndMemberId(orderId, memberId))
+        when(paymentRepository.findByOrder_IdAndMember_Id(orderId, memberId))
                 .thenReturn(Optional.of(payment));
 
         // when
