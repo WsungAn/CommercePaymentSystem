@@ -18,6 +18,9 @@ public class MemberFixture {
         return member;
     }
 
+    public static Member createMemberWithoutId() {
+        return new Member(MEMBER_NAME, MEMBER_EMAIL, MEMBER_PASSWORD, MEMBER_PHONE);
+    }
 
 
 }
