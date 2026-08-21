@@ -12,7 +12,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RestController("/api/carts")
+@RestController
+@RequestMapping("/api/carts")
 public class CartItemController {
 
     private final CartFacade cartFacade;
