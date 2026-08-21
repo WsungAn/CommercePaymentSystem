@@ -26,7 +26,7 @@ public class PaymentService {
 
     // 결제 시도시 주문 ID로 결제정보조회 및 소유권 검증
     public Payment findByOrderIdAndMemberId(Long orderId, Long memberId) {
-        return paymentRepository.findByOrderIdAndMemberId(orderId, memberId)
+        return paymentRepository.findByOrder_IdAndMember_Id(orderId, memberId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.PAYMENT_NOT_FOUND));
     }
 
