@@ -95,7 +95,7 @@ public class CartFacade {
         CartItem cartItem = cartItemService.checkCartItemAuthor(cartItemId, cart.get());
 
         // 변경하려는 수량이 현재 상품의 재고보다 많음
-        if (productService.validateStock(changeQuantity, cartItem.getProduct() )){
+        if (!productService.validateStock(changeQuantity, cartItem.getProduct() )){
             throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK);
         }
 
