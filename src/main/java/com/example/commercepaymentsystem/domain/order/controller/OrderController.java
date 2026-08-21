@@ -76,4 +76,20 @@ public class OrderController {
                 )
         );
     }
+
+//  주문 상세 조회
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<ApiResponse<OrderDetailResponse>> getOrderDetail(
+            @AuthenticationPrincipal Long memberId,
+            @PathVariable Long orderId
+    ) {
+        OrderDetailResponse response =
+                orderFacade.getOrderDetail(memberId, orderId);
+
+        return ResponseEntity.ok(
+                ApiResponse.ok(response)
+        );
+    }
 }
+
