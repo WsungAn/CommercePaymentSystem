@@ -9,10 +9,7 @@ import com.example.commercepaymentsystem.domain.cart.service.CartItemService;
 import com.example.commercepaymentsystem.domain.cart.service.CartService;
 import com.example.commercepaymentsystem.domain.member.entity.Member;
 import com.example.commercepaymentsystem.domain.member.service.MemberService;
-import com.example.commercepaymentsystem.domain.order.dto.OrderCancelResponse;
-import com.example.commercepaymentsystem.domain.order.dto.OrderCreateRequest;
-import com.example.commercepaymentsystem.domain.order.dto.OrderCreateResponse;
-import com.example.commercepaymentsystem.domain.order.dto.OrderPreviewResponse;
+import com.example.commercepaymentsystem.domain.order.dto.*;
 import com.example.commercepaymentsystem.domain.order.entity.Order;
 import com.example.commercepaymentsystem.domain.order.entity.OrderItem;
 import com.example.commercepaymentsystem.domain.order.service.OrderService;
@@ -168,5 +165,17 @@ public class OrderFacade {
         Order order = orderService.createOrder(member ,totalPrice, orderItems);
         paymentService.createPayment(order,totalPrice);
         return OrderCreateResponse.from(order);
+    }
+    public OrderDetailResponse getOrderDetail(
+            Long memberId,
+            Long orderId
+    ) {
+        Order order =
+                orderService.findOwnedOrderWithItems(memberId, orderId);
+
+        Payment payment =
+                paymentService.findByOrderIdAndMemberId(orderId, memberId);
+
+        return OrderDetailResponse.of(order, payment);
     }
 }

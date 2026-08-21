@@ -44,7 +44,7 @@ public class SecurityConfig {
                         .requestMatchers(toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/favicon.*").permitAll()
                         .requestMatchers("/", "/login", "/signup", "/products/**", "/cart", "/orders/**", "/checkout").permitAll()
-                        .requestMatchers("/api/auth/**", "/api/products/**", "/api/webhooks/**", "/api/config/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/products/**", "/api/webhooks/**", "/api/config/**", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
                 )

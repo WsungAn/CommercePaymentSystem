@@ -4,12 +4,15 @@ package com.example.commercepaymentsystem.domain.order.service;
 import com.example.commercepaymentsystem.common.exception.BusinessException;
 import com.example.commercepaymentsystem.common.exception.ErrorCode;
 import com.example.commercepaymentsystem.common.response.PageResponse;
+import com.example.commercepaymentsystem.domain.order.dto.OrderDetailResponse;
 import com.example.commercepaymentsystem.domain.order.dto.OrderSummaryResponse;
 import com.example.commercepaymentsystem.domain.order.entity.Order;
 import com.example.commercepaymentsystem.domain.order.entity.OrderItem;
 import com.example.commercepaymentsystem.domain.order.repository.OrderRepository;
 
 
+import com.example.commercepaymentsystem.domain.payment.entity.Payment;
+import com.example.commercepaymentsystem.domain.payment.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageRequest;
@@ -48,7 +51,7 @@ public class OrderService {
     }
 
     public Order findOwnedOrderWithItems(Long memberId, Long orderId) {
-        return orderRepository.findWithItemsByIdAndMemberId(orderId, memberId)
+        return orderRepository.findWithItemsByIdAndMemberId(orderId, memberId) // 모두 일치하는 주문 조회
                 .orElseThrow(() -> orderRepository.existsById(orderId)
                         ? new BusinessException(ErrorCode.NO_AUTHORITY)
                         : new BusinessException(ErrorCode.ORDER_NOT_FOUND));
