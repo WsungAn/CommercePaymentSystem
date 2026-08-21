@@ -37,8 +37,7 @@ public class CartFacade {
     {
         // 담으려는 상품이 0개 이하인지 확인
         if (quantity <= 0) {
-            // INVALID_CART_QUANTITY 변경 필요
-            throw new IllegalArgumentException("Quantity should be greater than 0");
+            throw new BusinessException(ErrorCode.INVALID_QUANTITY);
         }
 
         // 요청한 멤버가 있는지 확인
@@ -55,7 +54,7 @@ public class CartFacade {
         int totalQuantity = currentCartItemQuantity + quantity;
 
         // 장바구니에 넣은 수량이 현재 상품의 재고보다 많음
-        if (productService.validateStock(totalQuantity, product )){
+        if (!productService.validateStock(totalQuantity, product )){
             throw new BusinessException(ErrorCode.INSUFFICIENT_STOCK);
         }
 
