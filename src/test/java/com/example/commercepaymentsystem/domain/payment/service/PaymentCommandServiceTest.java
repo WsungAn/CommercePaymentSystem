@@ -56,6 +56,7 @@ public class PaymentCommandServiceTest {
     private OrderItem orderItem;
     private List<OrderItem> orderItems = new ArrayList<>();
     private Product product;
+    private Long orderId;
 
     @BeforeEach
     void setUp() {
@@ -64,7 +65,8 @@ public class PaymentCommandServiceTest {
         orderItem = OrderItemFixture.createOrderItem(product);
         orderItems.add(orderItem);
         member = MemberFixture.createMemberWithId(memberId);
-        order = OrderFixture.createOrder(member, orderItems);
+        orderId = 10L;
+        order = OrderFixture.createOrderWithId(member, orderItems, orderId);
         payment = PaymentFixture.createPayment(order, member);
     }
 
