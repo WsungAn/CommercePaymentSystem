@@ -69,8 +69,8 @@ class CartItemServiceTest {
 
         // then (총합 20개)
         assertThat(cartItem.getQuantity()).isEqualTo(20);
-        // save는 호출이 1번이라도 되면 안됨
-        then(cartItemRepository).should(never()).save(any(CartItem.class));
+        // then (save가 1번 일어났다면 정상)
+        then(cartItemRepository).should().save(any(CartItem.class));
 
     }
 
@@ -125,9 +125,7 @@ class CartItemServiceTest {
         // given
         Member member = MemberFixture.createMemberWithId(1L);
         Cart cart = CartFixture.createCartWithId(member, 1L);
-        Product product = ProductFixture.createProduct();
-        CartItem cartItem = CartItemFixture.createCartItemWithId(cart, product, 10, 1L);
-        given(cartItemRepository.findByCartAndProduct(cart, product)).willReturn(Optional.empty());
+        given(cartItemRepository.findByIdAndCartId(member.getId(), cart)).willReturn(Optional.empty());
 
         // when&then
         assertThatThrownBy(
@@ -145,7 +143,7 @@ class CartItemServiceTest {
         Cart cart = CartFixture.createCartWithId(member, 1L);
         Product product = ProductFixture.createProduct();
         CartItem cartItem = CartItemFixture.createCartItemWithId(cart, product, 10, 1L);
-        given(cartItemRepository.findByCartAndProduct(cart, product)).willReturn(Optional.of(cartItem));
+        given(cartItemRepository.findByIdAndCartId(member.getId(), cart)).willReturn(Optional.of(cartItem));
 
         // when
         CartItem getCartItem = cartItemService.checkCartItemAuthor(1L, cart);
@@ -155,6 +153,38 @@ class CartItemServiceTest {
         assertThat(getCartItem).isEqualTo(cartItem);
         assertThat(getCartItem.getProduct()).isEqualTo(product);
 
+    }
+
+    @Test
+    @DisplayName("장바구니에 담긴 상품의 합계(sum)의 결과가 null이면 0을 리턴한다.")
+    void getExistingQuantity_returnZero() {
+        // given
+        Member member = MemberFixture.createMemberWithId(1L);
+        Cart cart = CartFixture.createCartWithId(member, 1L);
+        Product product = ProductFixture.createProduct();
+        given(cartItemRepository.sumQuantityByCartAndProduct(cart, product)).willReturn(null);
+
+        // when
+        int count = cartItemService.getExistingQuantity(cart, product);
+
+        // then
+        assertThat(count).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("장바구니에 담긴 상품의 합계(sum)의 결과가 null이 아니면 N을 그대로 리턴한다..")
+    void getExistingQuantity_returnNum() {
+        // given
+        Member member = MemberFixture.createMemberWithId(1L);
+        Cart cart = CartFixture.createCartWithId(member, 1L);
+        Product product = ProductFixture.createProduct();
+        given(cartItemRepository.sumQuantityByCartAndProduct(cart, product)).willReturn(10);
+
+        // when
+        int count = cartItemService.getExistingQuantity(cart, product);
+
+        // then
+        assertThat(count).isEqualTo(10);
     }
 
 
