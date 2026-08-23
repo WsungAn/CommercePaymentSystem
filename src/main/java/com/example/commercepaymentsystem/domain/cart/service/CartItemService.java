@@ -46,7 +46,13 @@ public class CartItemService {
     @Transactional(readOnly = true)
     public int getExistingQuantity(Cart cart, Product product) {
 
-        return cartItemRepository.countQuantityByCartAndProduct(cart, product );
+        Integer countedQuantity = cartItemRepository.sumQuantityByCartAndProduct(cart, product );
+
+        if (countedQuantity == null) {
+            return 0;
+        }
+
+        return countedQuantity ;
     }
 
     // 장바구니에 담긴 상품들을 조회
@@ -62,10 +68,10 @@ public class CartItemService {
 
         // 장바구니에 들어있는 상품들의 총 가격을 구함
         int cartTotalPrice = cartItems.stream()
-                // CartItem에 있는 상품을 꺼냄
-                .map(CartItem::getProduct)
-                // 상품의 가격을 꺼냄
-                .mapToInt(Product::getPrice)
+                // CartItem에 있는 상품의 가격과 CartItem의 수량을 곱함 (가격 * 수량)
+                .mapToInt(cartItem -> {
+                    return cartItem.getProduct().getPrice() * cartItem.getQuantity();
+                })
                 // 모두 더함
                 .sum();
 
@@ -79,10 +85,10 @@ public class CartItemService {
 
     // 수량변경을 요청한 사용자의 CartId와 변경 대상 cartItemId가 모두 일치하는지 확인
     @Transactional(readOnly = true)
-    public CartItem checkCartItemAuthor(Long id, Cart cart) {
+    public CartItem checkCartItemAuthor(Long cartItemId, Cart cart) {
 
         Optional<CartItem> cartItem = cartItemRepository
-                .findByIdAndCartId(id,cart );
+                .findByIdAndCartId(cartItemId,cart );
 
         //  존재하지 않는다면 그건 본인 소유의 cartId가 아님
         if (cartItem.isEmpty()) {

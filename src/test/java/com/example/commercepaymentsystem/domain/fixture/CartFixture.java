@@ -14,4 +14,8 @@ public class CartFixture {
         return cart;
     }
 
+    public static Cart createCartWithoutId(Member member) {
+        return  new Cart(member);
+    }
+
 }

@@ -17,5 +17,9 @@ public class CartItemFixture {
         return cartItem;
     }
 
+    public static CartItem createCartItemWithoutId(
+            Cart cart, Product product, int quantity) {
+        return new CartItem(cart, product, quantity);
+    }
 
 }

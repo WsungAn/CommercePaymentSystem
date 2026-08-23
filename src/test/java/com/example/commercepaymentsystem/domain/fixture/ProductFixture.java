@@ -24,4 +24,16 @@ public class ProductFixture {
         ReflectionTestUtils.setField(product, "id", 1L);
         return product;
     }
+
+
+    public static Product createProductWithoutId() {
+         return new Product(
+                PRODUCT_NAME,
+                PRODUCT_PRICE,
+                PRODUCT_STOCK,
+                PRODUCT_DESCRIPTION,
+                PRODUCT_CATEGORY
+        );
+    }
+
 }

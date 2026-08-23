@@ -12,10 +12,10 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     boolean existsByOrderNumber(String orderNumber);
 
-    Page<Order> findByMemberIdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
+    Page<Order> findByMember_IdOrderByCreatedAtDesc(Long memberId, Pageable pageable);
 
     @EntityGraph(attributePaths = {"orderItems", "orderItems.product"})
-    Optional<Order> findWithItemsByIdAndMemberId(Long id, Long memberId);
+    Optional<Order> findWithItemsByIdAndMember_Id(Long id, Long memberId);
 
 
 }

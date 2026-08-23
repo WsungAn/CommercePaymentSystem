@@ -42,7 +42,7 @@ public class OrderService {
 
     public PageResponse<OrderSummaryResponse> getMyOrders(Long memberId, int page, int size) {
         return PageResponse.of(
-                orderRepository.findByMemberIdOrderByCreatedAtDesc(
+                orderRepository.findByMember_IdOrderByCreatedAtDesc(
                         memberId,
                         PageRequest.of(page, size)
                 ),
@@ -51,7 +51,7 @@ public class OrderService {
     }
 
     public Order findOwnedOrderWithItems(Long memberId, Long orderId) {
-        return orderRepository.findWithItemsByIdAndMemberId(orderId, memberId) // 모두 일치하는 주문 조회
+        return orderRepository.findWithItemsByIdAndMember_Id(orderId, memberId) // 모두 일치하는 주문 조회
                 .orElseThrow(() -> orderRepository.existsById(orderId)
                         ? new BusinessException(ErrorCode.NO_AUTHORITY)
                         : new BusinessException(ErrorCode.ORDER_NOT_FOUND));
@@ -81,7 +81,7 @@ public class OrderService {
 
     // 주문시도 로직에 필요 - 본인소유주문인지 조회
     public Order findByIdAndMemberId(Long orderId, Long memberId) {
-        return orderRepository.findWithItemsByIdAndMemberId(orderId, memberId)
+        return orderRepository.findWithItemsByIdAndMember_Id(orderId, memberId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.ORDER_NOT_FOUND));
     }
 }
