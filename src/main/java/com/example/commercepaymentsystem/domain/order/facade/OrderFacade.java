@@ -123,6 +123,9 @@ public class OrderFacade {
         return selectedItems;
     }
 
+    // 클래스 레벨이 readOnly 라 쓰기 메서드는 각자 붙여야 한다.
+    // 주문 취소는 결제 상태 변경 + 재고 복구를 더티 체킹으로 반영하므로 쓰기 트랜잭션이어야 한다.
+    @Transactional
     public OrderCancelResponse cancelOrder(Long memberId, Long orderId, String reason) {
         Order order = orderService.findOwnedOrderWithItems(memberId, orderId);
         Payment payment = paymentService.findByOrderIdAndMemberId(orderId, memberId);
@@ -142,6 +145,8 @@ public class OrderFacade {
     }
 
 
+    // 재고 차감 + 주문/결제 저장이 한 트랜잭션에서 일어나야 한다
+    @Transactional
     public OrderCreateResponse createOrder(Long memberId, OrderCreateRequest request) {
         Member member = memberService.findMember(memberId);
         List<CartItem> cartItems = loadCartItems(memberId, request.cartItemIds());
