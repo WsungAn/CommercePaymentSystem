@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('로그인')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <div class="auth-box">
+        <h1 class="page-title">로그인</h1>
+
+        <!--
+          개발 편의용 데모 계정 버튼. data-* 값은 data.sql 이 넣는 계정과 같아야 한다.
+          실제 배포 전에는 이 블록과 data.sql 의 회원 INSERT 를 함께 지운다.
+        -->
+        <button type="button" class="btn-demo" id="demo-fill"
+                data-email="test1@example.com" data-password="1234">
+            데모 계정 자동 입력
+            <span class="btn-demo-hint">test1@example.com / 1234</span>
+        </button>
+
+        <!-- 회원가입 직후 리다이렉트로 넘어온 경우에만 뜬다 -->
+        <p class="form-notice" th:if="${param.signup != null}">
+            회원가입이 완료되었습니다. 로그인해 주세요.
+        </p>
+
+        <form class="auth-form" id="login-form" novalidate>
+            <label>
+                이메일
+                <input type="email" id="email" name="email" required
+                       autocomplete="username" placeholder="you@example.com">
+            </label>
+            <label>
+                비밀번호
+                <input type="password" id="password" name="password" required
+                       autocomplete="current-password" placeholder="비밀번호">
+            </label>
+            <p class="form-error" id="login-error" hidden>오류</p>
+            <button type="submit" class="btn-primary" id="login-submit">로그인</button>
+        </form>
+
+        <p class="auth-alt">
+            아직 계정이 없으신가요? <a th:href="@{/signup}">회원가입</a>
+        </p>
+    </div>
+</main>
+
+<script th:src="@{/js/login.js}" defer></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<!-- 모든 화면이 공유하는 head/header 조각 -->
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title}">Commerce</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <script th:src="@{/js/auth.js}" defer></script>
+</head>
+<body>
+<header class="site-header" th:fragment="header">
+    <a class="logo" th:href="@{/}">COMMERCE</a>
+    <nav class="site-nav">
+        <a th:href="@{/}">상품</a>
+    </nav>
+    <!--
+      기본값은 비로그인 상태 - "로그인" 링크만 둔다.
+      장바구니·주문내역·내 정보가 쓰는 API 는 모두 토큰이 없으면 401 이라
+      비로그인 상태에서는 열어봐야 보여줄 내용이 없다. 그래서 링크도 걸지 않는다.
+      토큰이 있으면 auth.js 가 "이름 · 장바구니 · 주문내역 · 로그아웃" 으로 다시 그린다.
+    -->
+    <div class="auth-state" id="auth-state">
+        <a th:href="@{/login}">로그인</a>
+    </div>
+</header>
+</body>
+</html>

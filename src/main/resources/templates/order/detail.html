@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('주문 상세')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container" id="order-detail-page" th:attr="data-order-id=${orderId}">
+    <a class="btn-text back" th:href="@{/orders}">← 주문 내역으로</a>
+
+    <p class="cart-status" id="detail-loading">불러오는 중...</p>
+    <p class="form-error" id="detail-error" hidden></p>
+
+    <article class="order-detail" id="detail-body" hidden>
+        <p class="order-number" id="detail-number"></p>
+
+        <dl class="order-meta">
+            <dt>주문 상태</dt>
+            <dd><span class="order-status" id="detail-status"></span></dd>
+            <dt>결제 상태</dt>
+            <dd><span class="order-status" id="detail-payment"></span></dd>
+            <dt>주문 일시</dt>
+            <dd id="detail-ordered-at"></dd>
+        </dl>
+
+        <div class="order-cancelled" id="detail-cancelled" hidden>
+            <p id="detail-cancelled-at"></p>
+            <p id="detail-cancel-reason"></p>
+        </div>
+
+        <!--
+          모의 PG 결제. 서버(PaymentCommandService.tryPayment)가 SUCCESS/FAIL 을 그대로 받아
+          주문 확정 / 주문 취소 + 재고 복구로 갈라지므로 두 경로를 화면에서 모두 눌러볼 수 있게 둔다.
+          실제 PG 를 붙일 때는 이 블록이 결제창 호출로 바뀐다.
+        -->
+        <div class="order-payment" id="detail-pay" hidden>
+            <p class="order-payment-guide">
+                결제 대기 중인 주문입니다. 모의 결제라 성공·실패를 직접 고를 수 있습니다.
+            </p>
+            <div class="order-payment-actions">
+                <button type="button" class="btn-primary" id="detail-pay-success">결제 성공 처리</button>
+                <button type="button" class="btn-link" id="detail-pay-fail">결제 실패 처리</button>
+            </div>
+        </div>
+
+        <h2 class="section-title">주문 상품</h2>
+        <ul class="cart-list" id="detail-items"></ul>
+
+        <div class="cart-summary">
+            <button type="button" class="btn-link" id="detail-cancel" hidden>주문 취소</button>
+            <p class="cart-total">총 <strong id="detail-total">0</strong>원</p>
+        </div>
+
+        <!-- 취소 사유 입력. "주문 취소" 를 누르면 열린다. 사유는 선택이고 서버 제한은 500자다 -->
+        <div class="cancel-form" id="detail-cancel-form" hidden>
+            <label for="detail-cancel-input">취소 사유 <span class="cancel-form-hint">(선택)</span></label>
+            <input type="text" id="detail-cancel-input" maxlength="500" placeholder="예: 단순 변심">
+            <div class="cancel-form-actions">
+                <button type="button" class="btn-primary" id="detail-cancel-confirm">주문 취소하기</button>
+                <button type="button" class="btn-link" id="detail-cancel-close">닫기</button>
+            </div>
+        </div>
+    </article>
+
+    <!-- 주문 당시 이름·단가 스냅샷을 그대로 보여준다 -->
+    <template id="detail-item-template">
+        <li class="cart-row">
+            <div class="cart-row-info">
+                <a class="cart-name"></a>
+                <p class="cart-unit-price"><span class="unit"></span>원 &times; <span class="qty"></span>개</p>
+            </div>
+            <p class="cart-subtotal"><span></span>원</p>
+        </li>
+    </template>
+</main>
+
+<script th:src="@{/js/order-labels.js}" defer></script>
+<script th:src="@{/js/order-detail.js}" defer></script>
+</body>
+</html>

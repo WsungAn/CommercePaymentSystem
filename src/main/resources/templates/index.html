@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('상품 목록')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <h1 class="page-title">상품 목록</h1>
+
+    <form class="filter" method="get" th:action="@{/}">
+        <label>
+            카테고리
+            <input type="text" name="category" th:value="${condition.category}" placeholder="전체">
+        </label>
+        <label>
+            최소 가격
+            <input type="number" name="minPrice" min="0" th:value="${condition.minPrice}" placeholder="0">
+        </label>
+        <label>
+            최대 가격
+            <input type="number" name="maxPrice" min="0" th:value="${condition.maxPrice}" placeholder="제한 없음">
+        </label>
+        <button type="submit">검색</button>
+        <a class="btn-text" th:href="@{/}">초기화</a>
+    </form>
+
+    <p class="result-count">총 <strong th:text="${products.totalElements}">0</strong>건</p>
+
+    <p class="empty" th:if="${#lists.isEmpty(products.content)}">조건에 맞는 상품이 없습니다.</p>
+
+    <ul class="product-grid" th:unless="${#lists.isEmpty(products.content)}">
+        <li class="product-card" th:each="product : ${products.content}">
+            <a th:href="@{/products/{id}(id=${product.id})}">
+                <span class="category" th:text="${product.category}">카테고리</span>
+                <h2 class="name" th:text="${product.name}">상품명</h2>
+                <p class="price"><span th:text="${#numbers.formatInteger(product.price, 3, 'COMMA')}">0</span>원</p>
+                <p class="stock" th:classappend="${product.stock == 0} ? 'sold-out'"
+                   th:text="${product.stock == 0 ? '품절' : '재고 ' + product.stock + '개'}">재고</p>
+            </a>
+        </li>
+    </ul>
+
+    <!-- 현재 페이지 기준 앞뒤 2개씩만 노출, 검색 조건은 링크마다 유지 -->
+    <nav class="pagination" th:if="${products.totalPages > 1}"
+         th:with="startPage=${products.page - 2 < 0 ? 0 : products.page - 2},
+                  endPage=${products.page + 2 >= products.totalPages ? products.totalPages - 1 : products.page + 2}">
+        <a class="page-link" th:if="${products.page > 0}"
+           th:href="@{/(page=${products.page - 1}, size=${products.size},
+                     category=${condition.category}, minPrice=${condition.minPrice}, maxPrice=${condition.maxPrice})}">이전</a>
+
+        <a class="page-link" th:each="i : ${#numbers.sequence(startPage, endPage)}"
+           th:classappend="${i == products.page} ? 'current'"
+           th:href="@{/(page=${i}, size=${products.size},
+                     category=${condition.category}, minPrice=${condition.minPrice}, maxPrice=${condition.maxPrice})}"
+           th:text="${i + 1}">1</a>
+
+        <a class="page-link" th:if="${products.page + 1 < products.totalPages}"
+           th:href="@{/(page=${products.page + 1}, size=${products.size},
+                     category=${condition.category}, minPrice=${condition.minPrice}, maxPrice=${condition.maxPrice})}">다음</a>
+    </nav>
+</main>
+</body>
+</html>

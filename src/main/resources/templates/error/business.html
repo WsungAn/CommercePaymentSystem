@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('오류')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <div class="error-box">
+        <p class="error-code" th:text="${code}">CODE</p>
+        <p class="error-message" th:text="${message}">오류가 발생했습니다.</p>
+        <a class="btn-text" th:href="@{/}">상품 목록으로</a>
+    </div>
+</main>
+</body>
+</html>

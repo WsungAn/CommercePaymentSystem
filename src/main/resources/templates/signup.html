@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('회원가입')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <div class="auth-box">
+        <h1 class="page-title">회원가입</h1>
+
+        <form class="auth-form" id="signup-form" novalidate>
+            <label>
+                이름
+                <input type="text" id="name" name="name" required
+                       autocomplete="name" placeholder="2~20자">
+            </label>
+            <label>
+                이메일
+                <input type="email" id="email" name="email" required
+                       autocomplete="username" placeholder="you@example.com">
+            </label>
+            <label>
+                비밀번호
+                <input type="password" id="password" name="password" required
+                       autocomplete="new-password" placeholder="4자 이상">
+            </label>
+            <label>
+                비밀번호 확인
+                <input type="password" id="password-confirm" name="passwordConfirm" required
+                       autocomplete="new-password" placeholder="비밀번호 재입력">
+            </label>
+            <label>
+                전화번호
+                <input type="tel" id="phone-number" name="phoneNumber" required
+                       autocomplete="tel" placeholder="010-0000-0000">
+            </label>
+            <p class="form-error" id="signup-error" hidden>오류</p>
+            <button type="submit" class="btn-primary" id="signup-submit">가입하기</button>
+        </form>
+
+        <p class="auth-alt">
+            이미 계정이 있으신가요? <a th:href="@{/login}">로그인</a>
+        </p>
+    </div>
+</main>
+
+<script th:src="@{/js/signup.js}" defer></script>
+</body>
+</html>

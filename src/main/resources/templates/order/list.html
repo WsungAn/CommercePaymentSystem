@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('주문 내역')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <h1 class="page-title">주문 내역</h1>
+
+    <p class="cart-status" id="order-loading">불러오는 중...</p>
+    <p class="form-error" id="order-error" hidden></p>
+
+    <p class="empty" id="order-empty" hidden>
+        주문한 내역이 없습니다. <a th:href="@{/}">상품 보러 가기</a>
+    </p>
+
+    <ul class="order-list" id="order-list" hidden></ul>
+
+    <nav class="pagination" id="order-pagination" hidden></nav>
+
+    <template id="order-row-template">
+        <li class="order-row">
+            <a class="order-link">
+                <p class="order-number"></p>
+                <p class="order-name"></p>
+            </a>
+            <span class="order-status"></span>
+            <p class="order-price"><span></span>원</p>
+        </li>
+    </template>
+</main>
+
+<script th:src="@{/js/order-labels.js}" defer></script>
+<script th:src="@{/js/orders.js}" defer></script>
+</body>
+</html>
