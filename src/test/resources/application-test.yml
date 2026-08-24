@@ -6,7 +6,7 @@ spring:
       replace: none
 
   datasource:
-    url: jdbc:mysql://localhost:3306/commerce_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+    url: jdbc:mysql://localhost:3306/commerce_db_test?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
     username: root
     password: root1234
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -21,10 +21,6 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
     defer-datasource-initialization: true
-
-  sql:
-    init:
-      mode: always
 
 server:
   port: 8080
