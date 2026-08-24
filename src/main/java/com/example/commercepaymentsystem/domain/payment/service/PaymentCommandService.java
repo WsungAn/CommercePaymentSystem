@@ -60,6 +60,8 @@ public class PaymentCommandService {
             Optional<Cart> cart = cartService.getCart(memberId);// 4-3)
             if (cart.isEmpty()) {
                 throw new BusinessException(ErrorCode.CART_EMPTY);
+                // 현재는 PG사 연동 전이므로 DB 트랜잭션 롤백으로 결제/주문 상태를 복구한다.
+                // 실제 PG 연동 시에는 이미 승인된 결제에 대해 PG사 결제 취소(보상 트랜잭션)를 요청해야 한다.
             }
             cartItemService.deleteCartItems(cart.get());
 
