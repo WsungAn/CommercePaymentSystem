@@ -1,12 +1,11 @@
 package com.example.commercepaymentsystem.domain.cart.repository;
 
 
-import com.example.commercepaymentsystem.domain.TestJpaConfig;
+import com.example.commercepaymentsystem.config.JpaConfig;
 import com.example.commercepaymentsystem.domain.cart.entity.Cart;
 import com.example.commercepaymentsystem.domain.cart.entity.CartItem;
 import com.example.commercepaymentsystem.domain.fixture.CartFixture;
 import com.example.commercepaymentsystem.domain.fixture.CartItemFixture;
-import com.example.commercepaymentsystem.domain.fixture.MemberFixture;
 import com.example.commercepaymentsystem.domain.fixture.ProductFixture;
 import com.example.commercepaymentsystem.domain.member.entity.Member;
 import com.example.commercepaymentsystem.domain.member.repository.MemberRepository;
@@ -16,9 +15,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,9 +28,16 @@ import static org.assertj.core.api.Assertions.*;
 
 
 @DataJpaTest
-@ActiveProfiles("test")
-@Import(TestJpaConfig.class)
-//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(JpaConfig.class)
+@TestPropertySource(properties = {
+        "spring.datasource.url=jdbc:h2:mem:productdb;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1",
+        "spring.datasource.driver-class-name=org.h2.Driver",
+        "spring.datasource.username=sa",
+        "spring.datasource.password=",
+        "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect",
+        "spring.sql.init.mode=never"
+})
 class CartItemRepositoryTest {
 
     // JPQL과 같은 메서드를 실행하는 쿼리 담당, save()로 영속성 컨텍스트에 등록
