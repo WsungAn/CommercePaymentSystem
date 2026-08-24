@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 // cartItem은 cart_id와 product_id 2개를 기준으로 유일키를 식별한다.
 // 한 사용자와 여러 상품을 답을 수 있기 때문에 cartId만으로는 유일키를 정하지 못하기 때문
-@Table(name = "cartitems", uniqueConstraints = {
+@Table(name = "cart_items", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"cart_id", "product_id"})
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

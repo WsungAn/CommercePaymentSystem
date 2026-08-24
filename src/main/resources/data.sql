@@ -89,7 +89,7 @@ VALUES
 
 -- 회원 1 의 장바구니는 비워 둡니다 - 화면에서 담기부터 시작하기 위해서입니다.
 -- 회원 2 의 장바구니에만 담아 두어 주문서/주문생성 API 를 곧바로 찍어볼 수 있게 합니다.
-INSERT INTO cartitems (id, cart_id, product_id, quantity, created_at, updated_at)
+INSERT INTO cart_items (id, cart_id, product_id, quantity, created_at, updated_at)
 VALUES
     (1, 2, 11, 1, '2026-08-21 10:22:00', '2026-08-21 10:22:00'),
     (2, 2, 27, 2, '2026-08-21 10:23:00', '2026-08-21 10:23:00');

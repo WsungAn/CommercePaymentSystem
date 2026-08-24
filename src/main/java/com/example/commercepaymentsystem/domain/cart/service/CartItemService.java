@@ -115,11 +115,13 @@ public class CartItemService {
     }
 
     // [Order] 사용자가 주문을 할 때 전체 장바구나애 았는 모든 상품을 주문
+    @Transactional(readOnly = true)
     public List<CartItem> getCartItem(Cart cart) {
         return cartItemRepository.findByCart(cart);
     }
 
     // [ Order ] 사용자가 주문을 할 때 몇몇 상품들(cartItem)만 선택하여 주문
+    @Transactional(readOnly = true)
     public List<CartItem> getCartItemSelected(
             Cart cart, List<Long> cartItemIds) {
         return cartItemRepository.findSelectedForOrder(cart, cartItemIds);
