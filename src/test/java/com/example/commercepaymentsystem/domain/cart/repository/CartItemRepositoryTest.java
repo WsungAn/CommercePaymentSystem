@@ -22,6 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -45,12 +46,34 @@ class CartItemRepositoryTest {
     @Autowired
     private TestEntityManager testEntityManager;
 
+    // 테스트가 한 번에 여러 개 돌려도 email/phone 충돌 나지 않게 유니크 보장
+    private static final AtomicLong SEQ = new AtomicLong(0);
+
+    private String uniqueEmail(String prefix) {
+        return prefix + "+" + SEQ.incrementAndGet() + "@test.com";
+    }
+
+    private String uniquePhone(String prefix) {
+        // 전화번호 형식/길이가 엔티티 제약과 맞는지 확인해 주세요.
+        return prefix + "-" + SEQ.incrementAndGet();
+    }
+
+    private Member saveMember(String name, String emailPrefix, String phonePrefix) {
+        Member member = new Member(
+                name,
+                uniqueEmail(emailPrefix),
+                "123456",                 // password 위치
+                uniquePhone(phonePrefix) // phoneNumber 위치
+        );
+        return memberRepository.save(member);
+    }
+
     @Test
     @DisplayName("장바구니에 담긴 상품의 수량이 정상적으로 잘 카운팅 된다.")
     void sumQuantityByCartAndProduct_returnsCorrectSum() {
 
         // Given
-        Member member = memberRepository.save(MemberFixture.createMemberWithoutId());
+        Member member = saveMember("memberA", "memberAA", "010-1111");
         Cart cart = cartRepository.save(CartFixture.createCartWithoutId(member));
         Product product = productRepository.save(ProductFixture.createProductWithoutId());
         CartItem cartItem = cartItemRepository.save(CartItemFixture.createCartItemWithoutId(cart, product,5));
@@ -70,7 +93,7 @@ class CartItemRepositoryTest {
     @DisplayName("Cart와 Product조합의 CartItem 이 있으면 CartItem을 리턴한다.")
     void findByCartAndProduct_returnsCorrectCartItem() {
         // Given
-        Member member = memberRepository.save(MemberFixture.createMemberWithoutId());
+        Member member = saveMember("memberA", "memberAB", "010-1112");
         Cart cart = cartRepository.save(CartFixture.createCartWithoutId(member));
         Product product = productRepository.save(ProductFixture.createProductWithoutId());
         CartItem cartItem = cartItemRepository.save(CartItemFixture.createCartItemWithoutId(cart, product,5));
@@ -83,7 +106,7 @@ class CartItemRepositoryTest {
 
         // then
         assertThat(getCartItem).isNotNull();
-        assertThat(getCartItem.get().getId()).isEqualTo(1L);
+        assertThat(getCartItem.get().getId()).isEqualTo(cartItem.getId());
     }
 
     @Test
@@ -91,7 +114,7 @@ class CartItemRepositoryTest {
     void findByCartAndProduct_returnNullCartItem() {
 
         // Given
-        Member member = memberRepository.save(MemberFixture.createMemberWithoutId());
+        Member member = saveMember("memberA", "memberAC", "010-1113");
         Cart cart = cartRepository.save(CartFixture.createCartWithoutId(member));
         Product product = productRepository.save(ProductFixture.createProductWithoutId());
 
@@ -107,9 +130,7 @@ class CartItemRepositoryTest {
     void findByCart_returnCartItems() {
 
         // Given
-        Member member1 =
-                memberRepository.save(new Member("test1", "test1@test.com", "010-1234-5678", "123456"));
-
+        Member member1 = saveMember("memberA", "memberAD", "010-1114");
         Cart cart1 = cartRepository.save(new Cart(member1));
 
         Product product1 =
@@ -128,7 +149,7 @@ class CartItemRepositoryTest {
         // then
         assertThat(cartItems).isNotNull();
         assertThat(cartItems.size()).isEqualTo(2);
-        assertThat(cartItems.get(0).getId()).isEqualTo(1L);
+        assertThat(cartItems.get(0).getId()).isEqualTo(cart1.getId());
         assertThat(cartItems.get(0).getProduct().getName()).isEqualTo("test1");
         assertThat(cartItems.get(1).getProduct().getName()).isEqualTo("test2");
     }
@@ -137,7 +158,7 @@ class CartItemRepositoryTest {
     @DisplayName("장바구니에 담긴 상품들이 없을경우 빈 배열을 리턴한다.")
     void findByCart_returnNull() {
         // Given
-        Member member = memberRepository.save(MemberFixture.createMemberWithoutId());
+        Member member = saveMember("memberA", "memberAE", "010-1115");
         Cart cart = cartRepository.save(CartFixture.createCartWithoutId(member));
         testEntityManager.flush();
         testEntityManager.clear();
@@ -153,7 +174,7 @@ class CartItemRepositoryTest {
     @DisplayName("CartId와 cartItemId가 모두 일치하면 정상적으로 CartItem 을 리턴한다.")
     void findByIdAndCartId_returnCartItem() {
         // Given
-        Member member = memberRepository.save(MemberFixture.createMemberWithoutId());
+        Member member = saveMember("memberA", "memberAF", "010-1116");
         Cart cart = cartRepository.save(CartFixture.createCartWithoutId(member));
         Product product = productRepository.save(ProductFixture.createProductWithoutId());
         CartItem cartItem = cartItemRepository.save(CartItemFixture.createCartItemWithoutId(cart, product,5));
@@ -166,18 +187,16 @@ class CartItemRepositoryTest {
 
         // then
         assertThat(getCartItem).isNotNull();
-        assertThat(getCartItem.get().getId()).isEqualTo(1L);
+        assertThat(getCartItem.get().getId()).isEqualTo(cartItem.getId());
     }
 
     @Test
     @DisplayName("CartId와 cartItemId 가 일치하지 않으면 null을 리턴한다.")
     void findByIdAndCartId_returnNull() {
         // Given
-        Member member1 =
-                memberRepository.save(new Member("test1", "test1@test.com", "010-1234-5678", "123456"));
+        Member member1 = saveMember("memberA", "memberAG", "010-1116");
 
-        Member member2 =
-                memberRepository.save(new Member("test2", "test2@test.com", "010-1234-5679", "123456"));
+        Member member2 = saveMember("memberB", "memberBA", "010-1117");
         Cart cart1 = cartRepository.save(new Cart(member1));
         Cart cart2 = cartRepository.save(new Cart(member2));
         Product product = productRepository.save(ProductFixture.createProductWithoutId());
@@ -200,11 +219,9 @@ class CartItemRepositoryTest {
     void findByCartId_deleteAll() {
 
         // Given
-        Member member1 =
-                memberRepository.save(new Member("test1", "test1@test.com", "010-1234-5678", "123456"));
+        Member member1 = saveMember("memberA", "memberAH", "010-1118");
+        Member member2 = saveMember("memberB", "memberBB", "010-1119");
 
-        Member member2 =
-                memberRepository.save(new Member("test2", "test2@test.com", "010-1234-5679", "123456"));
         Cart cart1 = cartRepository.save(new Cart(member1));
         Cart cart2 = cartRepository.save(new Cart(member2));
         Product product = productRepository.save(ProductFixture.createProductWithoutId());
@@ -236,11 +253,8 @@ class CartItemRepositoryTest {
     void findSelectedForOrder_fetchesOnlyItemsBelongToCart() {
 
         // Given
-        Member member1 =
-                memberRepository.save(new Member("test1", "test1@test.com", "010-1234-5678", "123456"));
-
-        Member member2 =
-                memberRepository.save(new Member("test2", "test2@test.com", "010-1234-5679", "123456"));
+        Member member1 = saveMember("memberA", "memberAI", "010-1120");
+        Member member2 = saveMember("memberB", "memberBC", "010-1121");
         Cart cart1 = cartRepository.save(new Cart(member1));
         Cart cart2 = cartRepository.save(new Cart(member2));
 
