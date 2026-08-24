@@ -60,7 +60,7 @@ class ProductControllerTest {
                 List.of(response(1L, "무선 마우스", 15_000, 10, "전자기기")), 0, 10, 1, 1);
         given(productService.findAll(any(ProductSearchCondition.class), any(Pageable.class))).willReturn(page);
 
-        mockMvc.perform(get("/products"))
+        mockMvc.perform(get("/api/products"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true))
                 .andExpect(jsonPath("$.code").doesNotExist())
@@ -81,7 +81,7 @@ class ProductControllerTest {
         given(productService.findAll(any(ProductSearchCondition.class), any(Pageable.class)))
                 .willReturn(new PageResponse<>(List.of(), 0, 10, 0, 0));
 
-        mockMvc.perform(get("/products")
+        mockMvc.perform(get("/api/products")
                         .param("category", "전자기기")
                         .param("minPrice", "10000")
                         .param("maxPrice", "50000"))
@@ -103,7 +103,7 @@ class ProductControllerTest {
         given(productService.findAll(any(ProductSearchCondition.class), any(Pageable.class)))
                 .willReturn(new PageResponse<>(List.of(), 0, 10, 0, 0));
 
-        mockMvc.perform(get("/products")).andExpect(status().isOk());
+        mockMvc.perform(get("/api/products")).andExpect(status().isOk());
 
         ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
         verify(productService).findAll(any(ProductSearchCondition.class), pageableCaptor.capture());
@@ -122,7 +122,7 @@ class ProductControllerTest {
         given(productService.findById(eq(999L)))
                 .willThrow(new BusinessException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        mockMvc.perform(get("/products/{id}", 999L))
+        mockMvc.perform(get("/api/products/{id}", 999L))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.code").value("PRODUCT_001"))

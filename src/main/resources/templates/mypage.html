@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('내 정보')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <h1 class="page-title">내 정보</h1>
+
+    <p class="cart-status" id="member-loading">불러오는 중...</p>
+    <p class="form-error" id="member-error" hidden></p>
+
+    <dl class="member-info" id="member-body" hidden>
+        <dt>이름</dt>
+        <dd id="member-name"></dd>
+        <dt>이메일</dt>
+        <dd id="member-email"></dd>
+        <dt>연락처</dt>
+        <dd id="member-phone"></dd>
+        <dt>가입일</dt>
+        <dd id="member-created-at"></dd>
+    </dl>
+</main>
+
+<script th:src="@{/js/order-labels.js}" defer></script>
+<script th:src="@{/js/mypage.js}" defer></script>
+</body>
+</html>

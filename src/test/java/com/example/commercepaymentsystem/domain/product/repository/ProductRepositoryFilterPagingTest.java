@@ -39,7 +39,9 @@ import static org.assertj.core.api.Assertions.assertThat;
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect"
+        "spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.H2Dialect",
+        // data.sql 은 bootRun 용 더미 데이터다. 테스트가 직접 넣은 행만 보게 꺼둔다
+        "spring.sql.init.mode=never"
 })
 @DisplayName("상품 필터·페이징 (H2)")
 class ProductRepositoryFilterPagingTest {

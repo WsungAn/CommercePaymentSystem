@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${product.name})}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <a class="btn-text back" th:href="@{/}">← 목록으로</a>
+
+    <article class="product-detail">
+        <span class="category" th:text="${product.category}">카테고리</span>
+        <h1 class="name" th:text="${product.name}">상품명</h1>
+        <p class="price"><span th:text="${#numbers.formatInteger(product.price, 3, 'COMMA')}">0</span>원</p>
+        <p class="stock" th:classappend="${product.stock == 0} ? 'sold-out'"
+           th:text="${product.stock == 0 ? '품절' : '재고 ' + product.stock + '개'}">재고</p>
+
+        <!-- 장바구니 담기. 담기 자체는 /api/carts/{productId} 가 처리한다 -->
+        <div class="cart-add" id="cart-add-box" th:if="${product.stock > 0}"
+             th:attr="data-product-id=${product.id}">
+            <label>
+                수량
+                <input type="number" id="cart-quantity" value="1" min="1" th:max="${product.stock}">
+            </label>
+            <button type="button" class="btn-primary" id="cart-add">장바구니 담기</button>
+        </div>
+
+        <p class="form-notice" id="cart-notice" hidden></p>
+        <p class="form-error" id="cart-error" hidden></p>
+
+        <h2 class="section-title">상품 설명</h2>
+        <p class="description" th:if="${product.description != null}" th:text="${product.description}">설명</p>
+        <p class="description empty" th:if="${product.description == null}">등록된 설명이 없습니다.</p>
+    </article>
+</main>
+
+<script th:src="@{/js/cart.js}" defer></script>
+</body>
+</html>

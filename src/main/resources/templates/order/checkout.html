@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('주문서')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <h1 class="page-title">주문서</h1>
+
+    <p class="cart-status" id="checkout-loading">불러오는 중...</p>
+    <p class="form-error" id="checkout-error" hidden></p>
+
+    <p class="empty" id="checkout-empty" hidden>
+        주문할 상품이 없습니다. <a th:href="@{/cart}">장바구니로 가기</a>
+    </p>
+
+    <ul class="cart-list" id="checkout-list" hidden></ul>
+
+    <div class="cart-summary" id="checkout-summary" hidden>
+        <a class="btn-text" th:href="@{/cart}">← 장바구니 고치기</a>
+        <p class="cart-total">총 <strong id="checkout-total">0</strong>원</p>
+    </div>
+
+    <div class="checkout-actions" id="checkout-actions" hidden>
+        <button type="button" class="btn-primary" id="checkout-submit">결제하기</button>
+    </div>
+
+    <!-- 주문할 상품 한 줄. 수량 변경은 장바구니에서만 한다 -->
+    <template id="checkout-row-template">
+        <li class="cart-row">
+            <div class="cart-row-info">
+                <a class="cart-name"></a>
+                <p class="cart-unit-price"><span class="unit"></span>원 &times; <span class="qty"></span>개</p>
+            </div>
+            <p class="cart-subtotal"><span></span>원</p>
+        </li>
+    </template>
+</main>
+
+<script th:src="@{/js/checkout.js}" defer></script>
+</body>
+</html>

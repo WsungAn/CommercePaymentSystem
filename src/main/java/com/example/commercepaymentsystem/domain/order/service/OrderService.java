@@ -35,6 +35,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
 
 
+   @Transactional
    public Order createOrder(Member member, int totalPrice, List<OrderItem> orderItems) {
        Order order = new Order(member, generateOrderNumber(), totalPrice, orderItems);
        return orderRepository.save(order);

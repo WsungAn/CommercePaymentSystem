@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('장바구니')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: header}"></header>
+
+<main class="container">
+    <h1 class="page-title">장바구니</h1>
+
+    <!-- 아래 상태들은 cart-page.js 가 응답을 받은 뒤 하나만 남기고 감춘다 -->
+    <p class="cart-status" id="cart-loading">불러오는 중...</p>
+    <p class="form-error" id="cart-error" hidden></p>
+
+    <p class="empty" id="cart-empty" hidden>
+        장바구니가 비어 있습니다. <a th:href="@{/}">상품 보러 가기</a>
+    </p>
+
+    <ul class="cart-list" id="cart-list" hidden></ul>
+
+    <div class="cart-summary" id="cart-summary" hidden>
+        <button type="button" class="btn-link" id="cart-clear">전체 비우기</button>
+        <p class="cart-total">총 <strong id="cart-total">0</strong>원</p>
+    </div>
+
+    <div class="checkout-actions" id="cart-checkout" hidden>
+        <a class="btn-primary" th:href="@{/checkout}">주문하기</a>
+    </div>
+
+    <!-- 상품 한 줄. JS 가 복제해서 값만 채운다 -->
+    <template id="cart-row-template">
+        <li class="cart-row">
+            <div class="cart-row-info">
+                <a class="cart-name"></a>
+                <p class="cart-unit-price"><span></span>원</p>
+            </div>
+            <div class="cart-row-actions">
+                <input type="number" class="cart-quantity" min="1" value="1">
+                <button type="button" class="btn-text cart-update">변경</button>
+                <button type="button" class="btn-text cart-delete">삭제</button>
+            </div>
+            <p class="cart-subtotal"><span></span>원</p>
+        </li>
+    </template>
+</main>
+
+<script th:src="@{/js/cart-page.js}" defer></script>
+</body>
+</html>
