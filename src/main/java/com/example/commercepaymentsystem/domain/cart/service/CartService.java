@@ -19,7 +19,7 @@ public class CartService {
     // 장바구니에 담을 때 유저의 장바구니를 꺼내옴 없으면 장바구니 생성
     public Cart getOrCreateCart(Member member) {
 
-        Optional<Cart> cart = cartRepository.findById(member.getId());
+        Optional<Cart> cart = cartRepository.findCartByMemberId(member.getId());
 
         if (cart.isEmpty()) {
             Cart newCart = new Cart(member);
@@ -32,7 +32,7 @@ public class CartService {
     // 유저가 가지고 있는 장바구니를 꺼내온다.
     @Transactional(readOnly = true)
     public Optional<Cart> getCart(Long memberId) {
-        return cartRepository.findById(memberId);
+        return cartRepository.findCartByMemberId(memberId);
     }
 
 }
