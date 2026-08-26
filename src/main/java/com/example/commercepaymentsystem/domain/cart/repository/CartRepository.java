@@ -18,5 +18,5 @@ public interface CartRepository extends JpaRepository<Cart, Long> {
     FROM Cart c
     WHERE c.member.id = :memberId
 """)
-    Optional<Cart> findByCartByMemberId(@Param("memberId") Long memberId);
+    Optional<Cart> findCartByMemberId(@Param("memberId") Long memberId);
 }
