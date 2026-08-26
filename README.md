@@ -154,6 +154,7 @@ Database
 - HTML
 - CSS
 - JavaScript
+- JSP
 
 ### 협업 / 관리
 
